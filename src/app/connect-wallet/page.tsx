@@ -75,8 +75,15 @@ const rotateGradient = keyframes`
 const GradientBackdrop = styled(Box)(({ theme }) => ({
   position: 'absolute',
   inset: 0,
-  background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e163c 100%)',
+  background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
   zIndex: -2,
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    inset: 0,
+    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 27, 75, 0.7) 50%, rgba(30, 22, 60, 0.8) 100%)',
+    zIndex: 1,
+  }
 }));
 
 const LogoContainer = styled(Box)(({ theme }) => ({
@@ -173,7 +180,21 @@ const ProgressContainer = styled(Box)(({ theme }) => ({
     animation: `${shimmer} 1.5s infinite ease-in-out`,
   }
 }));
-
+const PatternOverlay = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  inset: 0,
+  backgroundImage: `
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+    linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%),
+    linear-gradient(-45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%)
+  `,
+  backgroundSize: '400px 400px, 300px 300px, 200px 200px, 200px 200px',
+  backgroundPosition: '0 0, 100px 100px, 0 0, 0 0',
+  zIndex: -1,
+  opacity: 0.6,
+  animation: `${pulse} 20s infinite ease-in-out`,
+}));
 // Main component
 export default function ConnectWalletPage() {
   const [account, setAccount] = useState<string | null>(null);
@@ -256,7 +277,8 @@ export default function ConnectWalletPage() {
     }}>
       {/* Background */}
       <GradientBackdrop />
-      <GridLines />
+      <PatternOverlay />
+      {/* <GridLines /> */}
       
       {/* Flag background */}
       <Box sx={{
@@ -270,7 +292,10 @@ export default function ConnectWalletPage() {
           src={countryFlags[country] || countryFlags.default}
           alt={`${countryNames[country]} Flag Background`}
           fill
-          style={{ objectFit: 'cover' }}
+          style={{ 
+            objectFit: 'cover',
+            opacity: 0.15
+          }}
         />
       </Box>
       

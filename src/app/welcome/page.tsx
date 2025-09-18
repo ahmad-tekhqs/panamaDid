@@ -16,19 +16,19 @@ import {
 
 // Country flag mapping
 const countryFlags: Record<string, string> = {
-  pakistan: '/flags/pakistan-flag.svg',
+  // pakistan: '/flags/pakistan-flag.svg',
   panama: '/flags/panama-flag.svg',
-  costarica: '/flags/costa-rica-flag.svg',
+  // costarica: '/flags/costa-rica-flag.svg',
   // Default
-  default: '/pak.svg'
+  default: '/panama-flag.svg'
 };
 
 // Country name mapping
 const countryNames: Record<string, string> = {
-  pakistan: 'Pakistan',
+  // pakistan: 'Pakistan',
   panama: 'Panama',
-  costarica: 'Costa Rica',
-  default: 'Global'
+  // costarica: 'Costa Rica',
+  default: 'Panama'
 };
 
 // Define animations
@@ -57,8 +57,15 @@ const shimmer = keyframes`
 const GradientBackdrop = styled(Box)(({ theme }) => ({
   position: 'absolute',
   inset: 0,
-  background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e163c 100%)',
+  background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
   zIndex: -2,
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    inset: 0,
+    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 27, 75, 0.7) 50%, rgba(30, 22, 60, 0.8) 100%)',
+    zIndex: 1,
+  }
 }));
 
 const LogoContainer = styled(Box)(({ theme }) => ({
@@ -70,37 +77,43 @@ const LogoContainer = styled(Box)(({ theme }) => ({
 }));
 
 const ProgressBar = styled(LinearProgress)(({ theme }) => ({
-  width: '240px',
-  height: '4px',
-  margin: '1.5rem auto',
-  borderRadius: '4px',
-  backgroundColor: alpha('#ffffff', 0.2),
+  width: '300px',
+  height: '6px',
+  margin: '2rem auto',
+  borderRadius: '6px',
+  backgroundColor: alpha('#ffffff', 0.15),
   '& .MuiLinearProgress-bar': {
-    borderRadius: '4px',
-    background: `linear-gradient(90deg, #ffffff, ${alpha('#ffffff', 0.7)})`,
+    borderRadius: '6px',
+    background: `linear-gradient(90deg, #ffffff 0%, #e2e8f0 50%, #cbd5e1 100%)`,
+    boxShadow: '0 0 10px rgba(255, 255, 255, 0.3)',
   }
 }));
 
-const GridLines = styled(Box)(({ theme }) => ({
+const PatternOverlay = styled(Box)(({ theme }) => ({
   position: 'absolute',
   inset: 0,
-  backgroundImage: 
-    `linear-gradient(to right, ${alpha('#ffffff', 0.1)} 1px, transparent 1px),
-    linear-gradient(to bottom, ${alpha('#ffffff', 0.1)} 1px, transparent 1px)`,
-  backgroundSize: '40px 40px',
+  backgroundImage: `
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+    linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%),
+    linear-gradient(-45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%)
+  `,
+  backgroundSize: '400px 400px, 300px 300px, 200px 200px, 200px 200px',
+  backgroundPosition: '0 0, 100px 100px, 0 0, 0 0',
   zIndex: -1,
-  opacity: 0.3,
+  opacity: 0.6,
+  animation: `${pulse} 20s infinite ease-in-out`,
 }));
 
 export default function WelcomePage() {
   const router = useRouter();
-  const [country, setCountry] = useState<string>('default');
+  const [country, setCountry] = useState<string>('panama');
   const [progress, setProgress] = useState(0);
   
   useEffect(() => {
     // Check for selected country from localStorage
     if (typeof window !== 'undefined') {
-      const selectedCountry = localStorage.getItem('selectedCountry') || 'default';
+      const selectedCountry = "panama";
       setCountry(selectedCountry);
     }
     
@@ -135,22 +148,28 @@ export default function WelcomePage() {
     }}>
       {/* Background */}
       <GradientBackdrop />
-      <GridLines />
+      <PatternOverlay />
       
       {/* Flag background */}
       <Box sx={{
         position: 'absolute',
         inset: 0,
         zIndex: -1,
-        opacity: 0.15,
+        opacity: 0,
         animation: `${pulse} 8s infinite ease-in-out`,
       }}>
+        
         <Image 
           src={countryFlags[country] || countryFlags.default}
           alt={`${countryNames[country]} Flag Background`}
           fill
-          style={{ objectFit: 'cover' }}
+          style={{ 
+            objectFit: 'cover',
+            opacity: 0.15
+          }}
+
         />
+        
       </Box>
       
       {/* Radial gradient overlay */}
@@ -191,15 +210,22 @@ export default function WelcomePage() {
             </LogoContainer>
             
             <Typography 
-              variant="h2" 
+              variant="h1" 
               component="h1"
               sx={{
                 fontWeight: 800,
                 marginBottom: 2,
                 animation: `${fadeIn} 1s ease-out`,
                 letterSpacing: '0.02em',
-                textShadow: '0 0 20px rgba(255, 255, 255, 0.3)',
-                fontSize: { xs: '2.5rem', md: '4rem' }
+                background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 30%, #cbd5e1 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                textShadow: 'none',
+                fontSize: { xs: '2.5rem', md: '4rem' },
+                fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+                textAlign: 'center',
+                lineHeight: 0.9,
               }}
             >
               Welcome to RYT DID Creation
@@ -208,14 +234,26 @@ export default function WelcomePage() {
             <Typography 
               variant="h5"
               sx={{
-                color: 'rgba(255,255,255,0.9)',
+                background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 50%, #94a3b8 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
                 marginBottom: 4,
                 fontWeight: 300,
                 animation: `${fadeIn} 1s ease-out 0.5s both, ${slideUp} 1s ease-out 0.5s both`,
-                fontSize: { xs: '1.25rem', md: '1.5rem' }
+                fontSize: { xs: '1.25rem', md: '1.5rem' },
+                textAlign: 'center',
+                fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+                '& span': {
+                  background: 'linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  fontWeight: 500,
+                }
               }}
             >
-              Securing Identity On Chain in <span style={{ color: '#ffffff', fontWeight: 500 }}>{countryNames[country]}</span>
+              Securing Identity On Chain in <span>{countryNames[country]}</span>
             </Typography>
           </Box>
           
@@ -226,44 +264,51 @@ export default function WelcomePage() {
             display: 'flex',
             justifyContent: 'center',
           }}>
-            <Paper elevation={10} sx={{
-              padding: '2rem',
-              background: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              width: { xs: '100%', sm: '400px' },
+            <Paper elevation={20} sx={{
+              padding: '3rem',
+              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '24px',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              width: { xs: '100%', sm: '450px' },
               position: 'relative',
               overflow: 'hidden',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
               '&::before': {
                 content: '""',
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 right: 0,
-                height: '2px',
-                background: 'linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1), rgba(255, 255, 255, 0))',
-                animation: `${shimmer} 3s infinite linear`,
+                height: '3px',
+                background: 'linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0))',
+                animation: `${shimmer} 4s infinite linear`,
               }
             }}>
               <Typography sx={{ 
-                fontWeight: 400, 
+                fontWeight: 500, 
                 color: '#ffffff', 
-                marginBottom: 2,
-                fontSize: '1rem',
+                marginBottom: 3,
+                fontSize: '1.1rem',
+                letterSpacing: '0.02em',
+                textAlign: 'center',
               }}>
-                Redirecting to wallet connection...
+                Initializing Secure Connection...
               </Typography>
               
               <ProgressBar variant="determinate" value={progress} />
               
-              <Typography variant="caption" sx={{ 
-                opacity: 0.8,
+              <Typography variant="body2" sx={{ 
+                opacity: 0.9,
                 display: 'block',
-                marginTop: 1,
-                color: 'white'
+                marginTop: 2,
+                color: 'white',
+                fontSize: '0.9rem',
+                fontWeight: 400,
+                textAlign: 'center',
+                letterSpacing: '0.02em',
               }}>
-                {progress}% complete
+                {progress}% Complete
               </Typography>
             </Paper>
           </Box>
