@@ -165,7 +165,7 @@ function DIDCreationContent() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-black">
       <div className="max-w-4xl w-full bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8">
         <div className="flex items-center justify-center mb-8">
-          <div className="h-12 w-36 relative">
+          <div className="h-28 w-60 relative">
             <Image 
               src="/ryt-logo-color.svg"
               alt="RYT Logo"
@@ -175,8 +175,8 @@ function DIDCreationContent() {
           </div>
         </div>
         
-        <h1 className="text-2xl font-bold mb-2 text-center text-[#784af4] dark:text-white">Create Your DID</h1>
-        <p className="text-gray-600 dark:text-gray-400 text-center mb-8">Secure your digital identity on the blockchain</p>
+        <h1 className="text-2xl font-bold text-center text-[#052457] dark:text-white">Create Your DID</h1>
+        <p className="text-600 dark:text-gray-400 text-[#444444] text-center mb-4">Secure your digital identity on the blockchain</p>
         
         {/* Replace progress bar with Material-UI Stepper */}
         <div className="mb-6">
@@ -209,11 +209,19 @@ function DIDCreationContent() {
           
           <Button
             variant="contained"
-            color="primary"
             onClick={goToNextStep}
             disabled={state.currentStep === CreationStep.COMPLETED || !state.isStepCompleted}
             endIcon={<ArrowForwardIcon />}
-            sx={{ px: 3, py: 1 }}
+          
+            sx={{
+              px: 3,
+              py: 1,
+              background: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+              '&:hover': {
+                background: 'linear-gradient(90deg, #0B4EBD 0%, #052457 100%)',
+              },
+              color: '#ffffff',
+            }}
           >
             {state.currentStep === CreationStep.COMPLETED ? 'Finished' : 'Next'}
           </Button>

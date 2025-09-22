@@ -31,9 +31,9 @@ import {
 
 // Animation keyframes
 const pulse = keyframes`
-  0% { box-shadow: 0 0 0 0 ${alpha('#784af4', 0.7)}; }
-  70% { box-shadow: 0 0 0 15px ${alpha('#784af4', 0)}; }
-  100% { box-shadow: 0 0 0 0 ${alpha('#784af4', 0)}; }
+  0% { box-shadow: 0 0 0 0 ${alpha('#005EB8', 0.7)}; }
+  70% { box-shadow: 0 0 0 15px ${alpha('#005EB8', 0)}; }
+  100% { box-shadow: 0 0 0 0 ${alpha('#005EB8', 0)}; }
 `;
 
 const glowScan = keyframes`

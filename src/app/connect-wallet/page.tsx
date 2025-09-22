@@ -400,7 +400,7 @@ export default function ConnectWalletPage() {
                 right: 0,
                 height: '3px',
                 background: 'linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1), rgba(255, 255, 255, 0))',
-                animation: `${shimmer} 3s infinite linear`,
+                animation: `${shimmer} 10s infinite linear`,
               }
             }}>
               {isChecking ? (

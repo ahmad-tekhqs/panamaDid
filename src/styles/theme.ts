@@ -1,12 +1,18 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 import { PaletteMode } from '@mui/material';
 
-// App primary color: #784af4 (purple)
-const primaryColor = '#784af4';
-const primaryLightColor = '#a47ff7';
-const primaryDarkColor = '#5932d9';
+// Panama Government palette (from flag)
+// Primary = Panama Blue
+const primaryColor = '#052457';
+const primaryLightColor = '#80AEDC'; // tint for subtle surfaces
+const primaryDarkColor = '#00468A';  // darker for hover/active
+const primaryDarkerColor = '#003D70'; // deepest hover/focus tone
 
-// Create theme with consistent brand colors
+// Accent = Panama Red (use as secondary)
+const accentRed = '#EF3340';
+const accentRedLight = '#F36A75';
+const accentRedDark = '#B51C2A';
+
 const createAppTheme = (mode: PaletteMode) => {
   let theme = createTheme({
     palette: {
@@ -15,43 +21,31 @@ const createAppTheme = (mode: PaletteMode) => {
         main: primaryColor,
         light: primaryLightColor,
         dark: primaryDarkColor,
-        contrastText: '#ffffff',
+        contrastText: '#FFFFFF',
       },
       secondary: {
-        main: '#21CBF3',
-        light: '#67daff',
-        dark: '#0d9ec0',
-        contrastText: '#ffffff',
+        main: accentRed,
+        light: accentRedLight,
+        dark: accentRedDark,
+        contrastText: '#FFFFFF',
       },
       background: {
-        default: mode === 'light' ? '#f8f9fa' : '#121212',
-        paper: mode === 'light' ? '#ffffff' : '#1e1e1e',
+        default: mode === 'light' ? '#F8FAFD' : '#0B0F19',
+        paper: mode === 'light' ? '#FFFFFF' : '#111827',
       },
       text: {
-        primary: mode === 'light' ? '#24292e' : '#e1e4e8',
-        secondary: mode === 'light' ? '#586069' : '#8b949e',
+        primary: mode === 'light' ? '#111827' : '#E5E7EB',
+        secondary: mode === 'light' ? '#4B5563' : '#9CA3AF',
       },
     },
     typography: {
       fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-      h1: {
-        fontWeight: 700,
-      },
-      h2: {
-        fontWeight: 700,
-      },
-      h3: {
-        fontWeight: 600,
-      },
-      h4: {
-        fontWeight: 600,
-      },
-      h5: {
-        fontWeight: 600,
-      },
-      h6: {
-        fontWeight: 600,
-      },
+      h1: { fontWeight: 700 },
+      h2: { fontWeight: 700 },
+      h3: { fontWeight: 600 },
+      h4: { fontWeight: 600 },
+      h5: { fontWeight: 600 },
+      h6: { fontWeight: 600 },
       button: {
         fontWeight: 500,
         textTransform: 'none',
@@ -66,45 +60,60 @@ const createAppTheme = (mode: PaletteMode) => {
           root: {
             boxShadow: 'none',
             '&:hover': {
-              boxShadow: '0 3px 5px 2px rgba(120, 74, 244, .15)',
+              boxShadow: '0 6px 16px rgba(0, 94, 184, 0.18)', // blue-tinted hover shadow
             },
           },
           containedPrimary: {
-            background: `linear-gradient(45deg, ${primaryColor} 30%, ${primaryLightColor} 90%)`,
+            background: `linear-gradient(45deg, ${primaryDarkColor} 0%, ${primaryColor} 100%)`,
             '&:hover': {
-              background: `linear-gradient(45deg, ${primaryDarkColor} 30%, ${primaryColor} 90%)`,
+              background: `linear-gradient(45deg, ${primaryDarkerColor} 0%, ${primaryDarkColor} 100%)`,
+            },
+          },
+          outlinedPrimary: {
+            borderWidth: 2,
+            '&:hover': {
+              borderWidth: 2,
+              backgroundColor: 'rgba(0, 94, 184, 0.06)',
+            },
+          },
+          containedSecondary: {
+            background: `linear-gradient(45deg, ${accentRedDark} 0%, ${accentRed} 100%)`,
+            '&:hover': {
+              background: `linear-gradient(45deg, ${accentRedDark} 0%, ${accentRedDark} 100%)`,
             },
           },
         },
       },
       MuiChip: {
         styleOverrides: {
-          root: {
-            fontWeight: 500,
+          root: { fontWeight: 500 },
+          colorPrimary: {
+            backgroundColor: primaryLightColor,
+            color: primaryDarkColor,
           },
         },
       },
       MuiCssBaseline: {
         styleOverrides: {
           body: {
-            scrollbarColor: mode === 'light' ? '#bbb #f5f5f5' : '#444 #2b2b2b',
+            scrollbarColor: mode === 'light' ? '#BFC7D1 #F1F5F9' : '#3A3F4B #1A1F2A',
             '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
               width: '8px',
               height: '8px',
             },
             '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
-              backgroundColor: mode === 'light' ? '#bbb' : '#444',
+              backgroundColor: mode === 'light' ? '#BFC7D1' : '#3A3F4B',
               borderRadius: 8,
               minHeight: 24,
             },
             '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus': {
-              backgroundColor: mode === 'light' ? '#999' : '#555',
+              backgroundColor: mode === 'light' ? '#A6AFBC' : '#4A5160',
             },
             '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
-              backgroundColor: mode === 'light' ? '#999' : '#555',
+              backgroundColor: mode === 'light' ? '#A6AFBC' : '#4A5160',
             },
             '&::-webkit-scrollbar-track, & *::-webkit-scrollbar-track': {
-              backgroundColor: mode === 'light' ? '#f5f5f5' : '#2b2b2b',
+              backgroundColor: mode === 'light' ? '#F1F5F9' : '#1A1F2A',
             },
           },
         },
@@ -112,10 +121,9 @@ const createAppTheme = (mode: PaletteMode) => {
     },
   });
 
-  // Make fonts responsive
+  // Responsive type scales
   theme = responsiveFontSizes(theme);
-
   return theme;
 };
 
-export default createAppTheme; 
+export default createAppTheme;

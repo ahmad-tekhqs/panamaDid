@@ -43,7 +43,7 @@ const SecurityContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '2rem',
+  padding: '0rem',
   borderRadius: '16px',
   background: 'rgba(255, 255, 255, 0.05)',
   backdropFilter: 'blur(10px)',
@@ -73,18 +73,29 @@ const RecaptchaStep: React.FC<RecaptchaStepProps> = ({ onComplete, isLoading = f
 
   return (
     <SecurityContainer>
-      <Box sx={{ 
-        width: '100px',
-        height: '100px',
-        borderRadius: '50%',
-        background: `radial-gradient(circle at center, ${alpha('#5e35b1', 1)} 0%, ${alpha('#5e35b1', 0.1)} 90%)`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 3,
-      }}>
+          <Box
+        sx={{
+          width: '100px',
+          height: '100px',
+          borderRadius: '50%',
+          background: `
+            radial-gradient(circle at center,
+              #052457 0%,
+              #336ECE 38%,
+              #45A1E4 74%,
+              rgba(11, 78, 189, 0.31) 100%,
+              #3F7EE6 100%
+            )
+          `,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 3,
+        }}
+      >
         <SecurityIcon sx={{ fontSize: 60, color: '#fff' }} />
       </Box>
+
       
       <Typography 
         variant="h4" 
@@ -92,7 +103,7 @@ const RecaptchaStep: React.FC<RecaptchaStepProps> = ({ onComplete, isLoading = f
         sx={{ 
           fontWeight: 700, 
           marginBottom: 1,
-          color: '#5e35b1',
+          color: '#052457',
           textAlign: 'center'
         }}
       >
@@ -102,7 +113,7 @@ const RecaptchaStep: React.FC<RecaptchaStepProps> = ({ onComplete, isLoading = f
       <Typography 
         variant="body1" 
         sx={{ 
-          color: alpha('#5e35b1', 0.9),
+          color: alpha('#052457', 0.9),
           textAlign: 'center',
           marginBottom: 4,
           maxWidth: '450px'
@@ -112,16 +123,16 @@ const RecaptchaStep: React.FC<RecaptchaStepProps> = ({ onComplete, isLoading = f
       </Typography>
       
       <Paper elevation={4} sx={{ 
-        background: alpha('#5e35b1', 0.1), 
-        padding: 3, 
+        background: alpha('#B9CEF0', 1), 
+        padding: 2, 
         borderRadius: 3,
         border: '1px solid rgba(255, 255, 255, 0.1)',
-        marginBottom: 4,
+        marginBottom: 0.5,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center'
       }}>
-        <Box sx={{ marginBottom: 2 }}>
+        <Box sx={{ marginBottom: 0 }}>
           <ReCAPTCHA
             sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // Replace with your actual site key
             onChange={handleCaptchaVerification}

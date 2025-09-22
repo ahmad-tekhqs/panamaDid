@@ -57,9 +57,9 @@ const TOKEN_URI = "https://green-manual-tapir-637.mypinata.cloud/ipfs/bafkreiaap
 
 // Define keyframes for animations
 const pulse = keyframes`
-  0% { box-shadow: 0 0 0 0 ${alpha('#784af4', 0.7)}; }
-  70% { box-shadow: 0 0 0 15px ${alpha('#784af4', 0)}; }
-  100% { box-shadow: 0 0 0 0 ${alpha('#784af4', 0)}; }
+  0% { box-shadow: 0 0 0 0 ${alpha('#005EB8', 0.7)}; }
+  70% { box-shadow: 0 0 0 15px ${alpha('#005EB8', 0)}; }
+  100% { box-shadow: 0 0 0 0 ${alpha('#005EB8', 0)}; }
 `;
 
 const float = keyframes`
@@ -69,9 +69,9 @@ const float = keyframes`
 `;
 
 const glow = keyframes`
-  0% { filter: drop-shadow(0 0 2px ${alpha('#784af4', 0.5)}); }
-  50% { filter: drop-shadow(0 0 8px ${alpha('#784af4', 0.8)}); }
-  100% { filter: drop-shadow(0 0 2px ${alpha('#784af4', 0.5)}); }
+  0% { filter: drop-shadow(0 0 2px ${alpha('#005EB8', 0.5)}); }
+  50% { filter: drop-shadow(0 0 8px ${alpha('#005EB8', 0.8)}); }
+  100% { filter: drop-shadow(0 0 2px ${alpha('#005EB8', 0.5)}); }
 `;
 
 // Create styled components
@@ -90,7 +90,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     left: 0,
     right: 0,
     height: '4px',
-    background: `linear-gradient(90deg, ${alpha('#784af4', 0.8)}, ${alpha('#784af4', 0.2)})`,
+    background: `linear-gradient(90deg, ${alpha('#005EB8', 0.8)}, ${alpha('#005EB8', 0.2)})`,
   }
 }));
 
@@ -111,7 +111,7 @@ const MintingBox = styled(Box)(({ theme }) => ({
     right: -5,
     bottom: -5,
     borderRadius: '50%',
-    border: `2px solid ${alpha('#784af4', 0.3)}`,
+    border: `2px solid ${alpha('#005EB8', 0.3)}`,
     animation: `${pulse} 2s infinite`,
   }
 }));
@@ -120,12 +120,12 @@ const TransactionPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
   marginTop: theme.spacing(2),
   backgroundColor: alpha(theme.palette.background.paper, 0.5),
-  border: `1px solid ${alpha('#784af4', 0.2)}`,
+  border: `1px solid ${alpha('#005EB8', 0.2)}`,
   borderRadius: theme.shape.borderRadius,
   backdropFilter: 'blur(5px)',
   transition: 'all 0.3s ease',
   '&:hover': {
-    boxShadow: `0 5px 15px ${alpha('#784af4', 0.2)}`,
+    boxShadow: `0 5px 15px ${alpha('#005EB8', 0.2)}`,
     transform: 'translateY(-2px)',
   },
 }));
@@ -150,9 +150,9 @@ const SuccessBox = styled(Box)(({ theme }) => ({
 const DidDisplay = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
   marginTop: theme.spacing(3),
-  backgroundColor: alpha('#784af4', 0.05),
+  backgroundColor: alpha('#005EB8', 0.05),
   borderRadius: theme.shape.borderRadius * 1.5,
-  border: `1px solid ${alpha('#784af4', 0.2)}`,
+  border: `1px solid ${alpha('#005EB8', 0.2)}`,
   fontFamily: 'monospace',
   position: 'relative',
   overflow: 'hidden',
@@ -163,7 +163,7 @@ const DidDisplay = styled(Box)(({ theme }) => ({
     left: 0,
     right: 0,
     bottom: 0,
-    background: `linear-gradient(45deg, ${alpha('#784af4', 0)}, ${alpha('#784af4', 0.1)}, ${alpha('#784af4', 0)})`,
+    background: `linear-gradient(45deg, ${alpha('#005EB8', 0)}, ${alpha('#005EB8', 0.1)}, ${alpha('#005EB8', 0)})`,
     backgroundSize: '200% 200%',
     animation: 'shine 3s linear infinite',
   },
@@ -375,7 +375,7 @@ export default function MintingStep() {
                 variant="h6" 
                 sx={{ 
                   mb: 3,
-                  background: `linear-gradient(90deg, ${theme.palette.text.primary}, #784af4)`,
+                  background: `linear-gradient(90deg, ${theme.palette.text.primary}, #005EB8)`,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   fontWeight: 600
@@ -389,7 +389,7 @@ export default function MintingStep() {
                   size={80} 
                   thickness={3} 
                   sx={{ 
-                    color: '#784af4',
+                    color: '#005EB8',
                     animation: `${glow} 3s infinite`
                   }} 
                 />
@@ -405,10 +405,10 @@ export default function MintingStep() {
                   sx={{ 
                     height: 8, 
                     borderRadius: 4,
-                    backgroundColor: alpha('#784af4', 0.1),
+                    backgroundColor: alpha('#005EB8', 0.1),
                     '& .MuiLinearProgress-bar': {
                       borderRadius: 4,
-                      background: `linear-gradient(90deg, #784af4, ${alpha('#784af4', 0.7)})`,
+                      background: `linear-gradient(90deg, #005EB8, ${alpha('#005EB8', 0.7)})`,
                     }
                   }} 
                 />
@@ -420,7 +420,7 @@ export default function MintingStep() {
                 sx={{ 
                   justifyContent: 'center', 
                   mt: 3,
-                  color: '#784af4'
+                  color: '#005EB8'
                 }}
               >
                 <Typography variant="body2" color="text.secondary">
@@ -440,7 +440,7 @@ export default function MintingStep() {
                 sx={{ 
                   textAlign: 'center',
                   mb: 3,
-                  background: `linear-gradient(90deg, #784af4, ${alpha('#784af4', 0.7)})`,
+                  background: `linear-gradient(90deg, #005EB8, ${alpha('#005EB8', 0.7)})`,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   fontWeight: 600
@@ -458,7 +458,7 @@ export default function MintingStep() {
                   sx={{ 
                     position: 'relative',
                     zIndex: 1,
-                    color: '#784af4',
+                    color: '#005EB8',
                     display: 'block',
                     mx: 'auto',
                   }}
@@ -482,7 +482,7 @@ export default function MintingStep() {
                     component="div"
                     sx={{ 
                       fontWeight: 'bold',
-                      color: '#784af4',
+                      color: '#005EB8',
                       fontSize: '1rem'
                     }}
                   >
@@ -496,7 +496,7 @@ export default function MintingStep() {
                 sx={{ 
                   textAlign: 'center', 
                   mb: 3,
-                  color: '#784af4',
+                  color: '#005EB8',
                   fontWeight: 500
                 }}
               >
@@ -512,7 +512,7 @@ export default function MintingStep() {
                     <Box sx={{ 
                       p: 1.5, 
                       borderRadius: 1, 
-                      bgcolor: alpha('#784af4', 0.05),
+                      bgcolor: alpha('#005EB8', 0.05),
                       fontFamily: 'monospace',
                       fontSize: '0.75rem',
                       wordBreak: 'break-all'
@@ -534,7 +534,7 @@ export default function MintingStep() {
                       sx={{ 
                         fontWeight: 'medium',
                         fontFamily: 'monospace',
-                        color: '#784af4'
+                        color: '#005EB8'
                       }}
                     >
                       {tokenId}
@@ -560,7 +560,7 @@ export default function MintingStep() {
                   mt: 3,
                   mb: 2,
                   fontWeight: 700,
-                  background: `linear-gradient(90deg, ${theme.palette.success.main}, #784af4)`,
+                  background: `linear-gradient(90deg, ${theme.palette.success.main}, #005EB8)`,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}
@@ -576,7 +576,7 @@ export default function MintingStep() {
                 <TransactionPaper elevation={0}>
                   <Stack spacing={1} alignItems="flex-start">
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <LinkIcon fontSize="small" sx={{ color: '#784af4' }} />
+                      <LinkIcon fontSize="small" sx={{ color: '#005EB8' }} />
                       <Typography variant="caption" color="text.secondary">
                         Transaction Hash
                       </Typography>
@@ -584,7 +584,7 @@ export default function MintingStep() {
                     <Box sx={{ 
                       p: 1.5, 
                       borderRadius: 1, 
-                      bgcolor: alpha('#784af4', 0.05),
+                      bgcolor: alpha('#005EB8', 0.05),
                       fontFamily: 'monospace',
                       fontSize: '0.75rem',
                       width: '100%',
@@ -605,7 +605,7 @@ export default function MintingStep() {
                     variant="h6" 
                     sx={{ 
                       fontFamily: 'monospace',
-                      color: '#784af4',
+                      color: '#005EB8',
                       fontWeight: 700,
                       letterSpacing: 0.5
                     }}
@@ -622,8 +622,8 @@ export default function MintingStep() {
                 variant="outlined" 
                 sx={{ 
                   mt: 4, 
-                  color: '#784af4', 
-                  borderColor: alpha('#784af4', 0.5),
+                  color: '#005EB8', 
+                  borderColor: alpha('#005EB8', 0.5),
                   px: 2,
                   py: 0.5,
                   animation: `${pulse} 2s infinite`

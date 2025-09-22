@@ -29,8 +29,8 @@ const QontoConnector = styled(StepConnector)(({ theme }) => ({
   },
   [`& .${stepConnectorClasses.line}`]: {
     borderColor: '#eaeaf0',
-    borderTopWidth: 3,
-    borderRadius: 1,
+    borderTopWidth: 4,
+    borderRadius: 3,
     ...theme.applyStyles('dark', {
       borderColor: theme.palette.grey[800],
     }),
@@ -41,16 +41,16 @@ const QontoStepIconRoot = styled('div')<{ ownerState: { active?: boolean } }>(
   ({ theme }) => ({
     color: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#eaeaf0',
     display: 'flex',
-    height: 22,
+    height: 25,
     alignItems: 'center',
     '& .QontoStepIcon-completedIcon': {
       color: theme.palette.primary.main,
       zIndex: 1,
-      fontSize: 18,
+      fontSize: 25,
     },
     '& .QontoStepIcon-circle': {
-      width: 8,
-      height: 8,
+      width: 10,
+      height: 10,
       borderRadius: '50%',
       backgroundColor: 'currentColor',
     },

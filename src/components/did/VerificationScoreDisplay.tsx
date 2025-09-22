@@ -9,12 +9,12 @@ const ScoreContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   padding: '12px 20px',
   borderRadius: '12px',
-  background: alpha('#5e35b1', 0.05),
+  background: alpha('#D4E6FF', 1),
   border: `1px solid ${alpha('#5e35b1', 0.1)}`,
-  marginBottom: '1.5rem',
+  marginBottom: '0.5rem',
   width: '100%',
   maxWidth: '300px',
-  margin: '0 auto 2rem',
+  margin: '0 auto 1rem',
 }));
 
 const ScoreProgressWrapper = styled(Box)(({ theme }) => ({
@@ -24,6 +24,8 @@ const ScoreProgressWrapper = styled(Box)(({ theme }) => ({
 }));
 
 const getScoreColor = (score: number) => {
+  //D8131B
+  if (score < 20) return '#D8131B';
   if (score < 30) return '#ff9800'; // Orange for low scores
   if (score < 60) return '#42a5f5'; // Blue for medium scores
   if (score < 90) return '#66bb6a'; // Green for high scores
@@ -63,15 +65,16 @@ const VerificationScoreDisplay: React.FC = () => {
           <SecurityIcon 
             sx={{ 
               color: scoreColor,
-              mr: 1,
+              mr: 0.5,
               fontSize: '1.2rem'
             }} 
           />
           <Typography 
             variant="body2" 
             sx={{ 
-              fontWeight: 600,
-              color: '#5e35b1'
+              fontWeight: 700,
+              fontSize: '1rem',
+              color: '#052457'
             }}
           >
             Verification Score
