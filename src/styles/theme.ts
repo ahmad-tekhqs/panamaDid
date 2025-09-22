@@ -39,7 +39,7 @@ const createAppTheme = (mode: PaletteMode) => {
       },
     },
     typography: {
-      fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
       h1: { fontWeight: 700 },
       h2: { fontWeight: 700 },
       h3: { fontWeight: 600 },

@@ -217,11 +217,21 @@ function DIDCreationContent() {
             sx={{
               px: 3,
               py: 1,
-              background: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+              color: '#fff',
+              // lock the gradient in normal + hover so MUI can't swap in primary bg
+              backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+              backgroundColor: 'transparent',
               '&:hover': {
-                background: 'linear-gradient(90deg, #0B4EBD 0%, #052457 100%)',
+                backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                backgroundColor: 'transparent',
+                filter: 'brightness(1.05)',
               },
-              color: '#ffffff',
+              '&.Mui-disabled': {
+                color: '#fff',
+                opacity: 1,
+                backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+              },
+              
             }}
           >
             {state.currentStep === CreationStep.COMPLETED ? 'Finished' : 'Next'}

@@ -223,7 +223,6 @@ export default function WelcomePage() {
                 backgroundClip: 'text',
                 textShadow: 'none',
                 fontSize: { xs: '2.5rem', md: '4rem' },
-                fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
                 textAlign: 'center',
                 lineHeight: 0.9,
               }}
@@ -243,7 +242,6 @@ export default function WelcomePage() {
                 animation: `${fadeIn} 1s ease-out 0.5s both, ${slideUp} 1s ease-out 0.5s both`,
                 fontSize: { xs: '1.25rem', md: '1.5rem' },
                 textAlign: 'center',
-                fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
                 '& span': {
                   background: 'linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)',
                   WebkitBackgroundClip: 'text',

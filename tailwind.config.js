@@ -7,6 +7,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'sans': ['var(--font-roboto)', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        'roboto': ['var(--font-roboto)', 'Roboto', 'sans-serif'],
+      },
       colors: {
         'didPurple': '#005EB8',
       },
