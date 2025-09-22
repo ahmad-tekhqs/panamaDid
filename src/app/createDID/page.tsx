@@ -164,7 +164,7 @@ function DIDCreationContent() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-black">
       <div className="max-w-4xl w-full bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8">
-        <div className="flex items-center justify-center mb-8">
+        <div className="flex flex-col items-center justify-center mb-8">
           <div className="h-28 w-60 relative">
             <Image 
               src="/ryt-logo-color.svg"
@@ -173,6 +173,7 @@ function DIDCreationContent() {
               style={{ objectFit: 'contain' }}
             />
           </div>
+            <p className="mt-2 text-[10.9px] italic font-roboto">Con paso firme</p>
         </div>
         
         <h1 className="text-2xl font-bold text-center text-[#052457] dark:text-white">Create Your DID</h1>
