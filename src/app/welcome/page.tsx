@@ -63,7 +63,7 @@ const GradientBackdrop = styled(Box)(({ theme }) => ({
     content: '""',
     position: 'absolute',
     inset: 0,
-    background: 'linear-gradient(270deg, rgba(212, 230, 255, 0.9) 0%, rgba(248, 251, 255, 0.7) 50%, rgba(255, 255, 255, 0.8) 100%)',
+    background: 'linear-gradient(90deg, rgba(212, 230, 255, 0.9) 0%, rgba(248, 251, 255, 0.7) 50%, rgba(255, 255, 255, 0.8) 100%)',
     zIndex: 1,
   }
 }));

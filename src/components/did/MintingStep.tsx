@@ -175,6 +175,7 @@ const DidDisplay = styled(Box)(({ theme }) => ({
 }));
 
 export default function MintingStep() {
+  const { updateVerificationScore } = useDIDContext();
   const theme = useTheme();
   const { state, updateDIDData, markStepAsCompleted } = useDIDContext();
   const [deploymentStage, setDeploymentStage] = useState<'preparing' | 'minting' | 'completed'>('preparing');
@@ -289,7 +290,7 @@ export default function MintingStep() {
                 }
                 
                 const signer = await provider.getSigner();
-                debugger;
+                
                 // Create contract instance
                 const contract = new ethers.Contract(
                   CONTRACT_ADDRESS, 
@@ -328,7 +329,8 @@ export default function MintingStep() {
               mintingTimestamp: new Date().toISOString(),
               transactionHash: hash
             });
-            
+            // add here the verification score
+            updateVerificationScore(95);
             setMintStatus("✅ Mint successful!");
             
             // Complete the minting animation

@@ -193,10 +193,10 @@ export const DIDProvider: React.FC<DIDProviderProps> = ({ children }) => {
             score = 55;
             break;
           case CreationStep.VERIFICATION:
-            score = prevState.skippedIDVerification ? 40 : 75;
+            score = prevState.skippedIDVerification ? 40 : 65;
             break;
           case CreationStep.MINTING:
-            score = prevState.skippedIDVerification ? 60 : 94;
+            score = prevState.skippedIDVerification ? 60 : 70;
             break;
           case CreationStep.COMPLETED:
             score = 100;
