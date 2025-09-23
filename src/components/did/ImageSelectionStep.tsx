@@ -46,7 +46,7 @@ const DropzoneContainer = styled(Paper)(({ theme }) => ({
   justifyContent: 'center',
   minHeight: 220,
   transition: 'all 0.3s ease-in-out',
-  background: alpha(theme.palette.primary.main, 0.03),
+  background: alpha('#EAF1FC', 1),
   '&:hover': {
     borderColor: theme.palette.primary.main,
     background: alpha(theme.palette.primary.main, 0.05),
@@ -190,7 +190,7 @@ export default function ImageSelectionStep() {
                   mb: 2, 
                   p: 1.5, 
                   borderRadius: '50%', 
-                  backgroundColor: alpha(theme.palette.primary.main, 0.1) 
+                  backgroundColor: alpha("#EAF1FC", 1) 
                 }}
               >
                 <FileUploadIcon 
@@ -214,7 +214,7 @@ export default function ImageSelectionStep() {
               </Typography>
               <Chip 
                 label="Select File" 
-                color="primary" 
+                // color="#EAF1FC" 
                 icon={<PhotoCameraIcon />} 
                 variant="outlined" 
                 sx={{ mt: 2 }} 
@@ -222,7 +222,7 @@ export default function ImageSelectionStep() {
             </DropzoneContainer>
             
             {/* Skip Verification option */}
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
+            {/* <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
               <Divider sx={{ width: '80%', mb: 3 }}>
                 <Typography variant="caption" color="text.secondary">OR</Typography>
               </Divider>
@@ -247,7 +247,7 @@ export default function ImageSelectionStep() {
                   and will use demo data instead of your real information.
                 </Typography>
               </Stack>
-            </Box>
+            </Box> */}
           </Box>
         </Fade>
       ) : (

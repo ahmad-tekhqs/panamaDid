@@ -65,7 +65,7 @@ const RecaptchaStep: React.FC<RecaptchaStepProps> = ({ onComplete, isLoading = f
     if (value) {
       setCaptchaVerified(true);
       // Set verification score to 15 for recaptcha completion
-      updateVerificationScore(15);
+      // updateVerificationScore(15);
       // Update context by calling onComplete automatically
       onComplete();
     }
@@ -136,7 +136,7 @@ const RecaptchaStep: React.FC<RecaptchaStepProps> = ({ onComplete, isLoading = f
           <ReCAPTCHA
             sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // Replace with your actual site key
             onChange={handleCaptchaVerification}
-            theme="dark"
+            theme="light"
           />
         </Box>
       </Paper>

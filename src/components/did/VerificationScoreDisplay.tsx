@@ -25,11 +25,12 @@ const ScoreProgressWrapper = styled(Box)(({ theme }) => ({
 
 const getScoreColor = (score: number) => {
   //D8131B
-  if (score < 20) return '#D8131B';
-  if (score < 30) return '#ff9800'; // Orange for low scores
-  if (score < 60) return '#42a5f5'; // Blue for medium scores
-  if (score < 90) return '#66bb6a'; // Green for high scores
-  return '#8e24aa'; // Purple for very high scores
+  if (score < 30) return '#D8131B';
+  if (score < 40) return '#ff9800'; // Orange for low scores
+  if (score <= 60) return '#42a5f5'; // Blue for medium scores
+  if (score <= 85) return '#4EDA5F'; // light green for medium scores
+  if (score <= 100) return '#0B4EBD'; // Green for high scores
+  return '#0B4EBD'; // Purple for very high scores
 };
 
 const ScoreTooltip = ({ score }: { score: number }) => {

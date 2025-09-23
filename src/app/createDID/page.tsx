@@ -106,7 +106,7 @@ function DIDCreationContent() {
       case CreationStep.COMPLETED:
         return (
           <Box sx={{ width: '100%' }}>
-            <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
+            <Box display="flex" alignItems="center" justifyContent="center" mb={1}>
               <Box sx={{ 
                 display: 'flex',
                 alignItems: 'center',
@@ -119,7 +119,7 @@ function DIDCreationContent() {
                 <CheckCircleIcon fontSize="large" />
               </Box>
             </Box>
-            <Typography variant="h5" fontWeight="medium" color="text.primary" gutterBottom align="center" sx={{ mb: 4 }}>
+            <Typography variant="h5" fontWeight="medium" color="text.primary" gutterBottom align="center" sx={{ mb: 1 }}>
               DID Successfully Created!
             </Typography>
             

@@ -166,7 +166,7 @@ export default function DIDProfileView() {
   };
   
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="lg" sx={{ py: 1 }}>
       <Typography 
         variant="h4" 
         component="h1" 

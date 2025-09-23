@@ -7,6 +7,7 @@ const primaryColor = '#052457';
 const primaryLightColor = '#80AEDC'; // tint for subtle surfaces
 const primaryDarkColor = '#00468A';  // darker for hover/active
 const primaryDarkerColor = '#003D70'; // deepest hover/focus tone
+const primaryLight = '#EAF1FC';
 
 // Accent = Panama Red (use as secondary)
 const accentRed = '#EF3340';
@@ -19,7 +20,7 @@ const createAppTheme = (mode: PaletteMode) => {
       mode,
       primary: {
         main: primaryColor,
-        light: primaryLightColor,
+        light: primaryLight,
         dark: primaryDarkColor,
         contrastText: '#FFFFFF',
       },
