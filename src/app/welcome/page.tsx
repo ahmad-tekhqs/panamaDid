@@ -57,7 +57,7 @@ const shimmer = keyframes`
 const GradientBackdrop = styled(Box)(({ theme }) => ({
   position: 'absolute',
   inset: 0,
-  background: 'linear-gradient(270deg, #D4E6FF 0%, #F8FBFF 50%, #FFFFFF 100%)',
+  background: 'linear-gradient(90deg, #D4E6FF 0%, #F8FBFF 50%, #FFFFFF 100%)',
   zIndex: -2,
   '&::before': {
     content: '""',

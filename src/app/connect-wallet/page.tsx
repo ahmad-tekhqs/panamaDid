@@ -75,13 +75,13 @@ const rotateGradient = keyframes`
 const GradientBackdrop = styled(Box)(({ theme }) => ({
   position: 'absolute',
   inset: 0,
-  background: 'linear-gradient(270deg, #D4E6FF 0%, #F8FBFF 50%, #FFFFFF 100%)',
+  background: 'linear-gradient(90deg, #D4E6FF 0%, #F8FBFF 50%, #FFFFFF 100%)',
   zIndex: -2,
   '&::before': {
     content: '""',
     position: 'absolute',
     inset: 0,
-    background: 'linear-gradient(270deg, rgba(212, 230, 255, 0.9) 0%, rgba(248, 251, 255, 0.7) 50%, rgba(255, 255, 255, 0.8) 100%)',
+    background: 'linear-gradient(90deg, rgba(212, 230, 255, 0.9) 0%, rgba(248, 251, 255, 0.7) 50%, rgba(255, 255, 255, 0.8) 100%)',
     zIndex: 1,
   }
 }));
@@ -447,7 +447,7 @@ export default function ConnectWalletPage() {
                     <AccountBalanceWalletOutlinedIcon 
                       sx={{ 
                         fontSize: '50px', 
-                        color: '#3498db' 
+                        color: '#052457' 
                       }} 
                     />
                   </Box>
@@ -455,7 +455,7 @@ export default function ConnectWalletPage() {
                   <Typography 
                     variant="h6" 
                     sx={{ 
-                      color: '#2c3e50',
+                      color: '#052457',
                       marginBottom: 3,
                       fontWeight: 500,
                     }}
@@ -476,7 +476,20 @@ export default function ConnectWalletPage() {
                     }
                     sx={{ 
                       minWidth: '220px', 
-                      opacity: loadingWallet ? 0.8 : 1
+                      opacity: loadingWallet ? 0.8 : 1,
+                      backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+              backgroundColor: 'transparent',
+              '&:hover': {
+                backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                backgroundColor: 'transparent',
+                filter: 'brightness(1.05)',
+              },
+              '&.Mui-disabled': {
+                color: '#fff',
+                opacity: 1,
+                backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+              },
+              
                     }}
                   >
                     {loadingWallet ? 'Connecting...' : 'Connect RYT Wallet'}
