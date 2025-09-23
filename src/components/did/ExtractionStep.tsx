@@ -46,13 +46,14 @@ const InfoCard = styled(Paper)(({ theme }) => ({
 
 const InfoItem = styled(Box)(({ theme }) => ({
   display: 'flex',
-  alignItems: 'center',
-  marginBottom: theme.spacing(2),
-  padding: theme.spacing(1.5),
+  alignItems: 'flex-start',
+  marginBottom: theme.spacing(1),
+  padding: theme.spacing(0.75, 1),
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.primary.main, 0.05),
+  backgroundColor: alpha(theme.palette.primary.main, 0.03),
+  transition: 'background-color 0.2s ease',
   '&:hover': {
-    backgroundColor: alpha(theme.palette.primary.main, 0.08),
+    backgroundColor: alpha(theme.palette.primary.main, 0.06),
   }
 }));
 
@@ -237,10 +238,10 @@ export default function ExtractionStep() {
               height: 10, 
               borderRadius: 5,
               mb: 2,
-              backgroundColor: alpha(theme.palette.primary.main, 0.1),
+              backgroundColor: alpha(theme.palette.primary.light, 1),
               '& .MuiLinearProgress-bar': {
                 borderRadius: 5,
-                background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
+                background: `linear-gradient(90deg, ${theme.palette.secondary.main} 100%, ${theme.palette.primary.light} 100%)`,
               }
             }} 
           />
@@ -305,51 +306,65 @@ export default function ExtractionStep() {
               
               {/* Info Section */}
               <Box sx={{ flexGrow: 1 }}>
-                <InfoCard elevation={2} sx={{ p: 3 }}>
-                  <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 3 }}>
+                <InfoCard elevation={2} sx={{ p: 2 }}>
+                  <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 1.5, fontSize: '1.1rem', fontWeight: 500 }}>
                     Extracted Information
                   </Typography>
                   
-                  <Stack spacing={2}>
+                  <Stack spacing={1}>
                     {extractedData && (
                       <>
                         <InfoItem>
-                          <PersonIcon sx={{ color: 'primary.main', mr: 2 }} />
+                          <PersonIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
                           <Box>
-                            <Typography variant="caption" color="text.secondary">Full Name</Typography>
-                            <Typography variant="body1">{extractedData?.fullName || 'Not available'}</Typography>
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                              Full Name
+                            </Typography>
+                            <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
+                              {extractedData?.fullName || 'Not available'}
+                            </Typography>
                           </Box>
                         </InfoItem>
                         
                         <InfoItem>
-                          <EventIcon sx={{ color: 'primary.main', mr: 2 }} />
+                          <EventIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
                           <Box>
-                            <Typography variant="caption" color="text.secondary">Date of Birth</Typography>
-                            <Typography variant="body1">{extractedData?.dateOfBirth || 'Not available'}</Typography>
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                              Date of Birth
+                            </Typography>
+                            <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
+                              {extractedData?.dateOfBirth || 'Not available'}
+                            </Typography>
                           </Box>
                         </InfoItem>
                         
                         <InfoItem>
-                          <BadgeIcon sx={{ color: 'primary.main', mr: 2 }} />
+                          <BadgeIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
                           <Box>
-                            <Typography variant="caption" color="text.secondary">ID Number</Typography>
-                            <Typography variant="body1">{extractedData?.idNumber || 'Not available'}</Typography>
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                              ID Number
+                            </Typography>
+                            <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
+                              {extractedData?.idNumber || 'Not available'}
+                            </Typography>
                           </Box>
                         </InfoItem>
                         
                         {/* Metadata fields */}
                         {extractedData?.metadata && (
                           <InfoItem>
-                            <AssignmentIcon sx={{ color: 'primary.main', mr: 2 }} />
+                            <AssignmentIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
                             <Box>
-                              <Typography variant="caption" color="text.secondary">Document Details</Typography>
+                              <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                                Document Details
+                              </Typography>
                               {extractedData.metadata.documentType && (
-                                <Typography variant="body1">
+                                <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
                                   Type: {extractedData.metadata.documentType}
                                 </Typography>
                               )}
                               {extractedData.metadata.issuingCountry && (
-                                <Typography variant="body1">
+                                <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
                                   Country: {extractedData.metadata.issuingCountry}
                                 </Typography>
                               )}
@@ -362,20 +377,20 @@ export default function ExtractionStep() {
                   
                   {/* Confidence score with visual indicator */}
                   {extractedData && extractedData.confidence && (
-                    <Box sx={{ mt: 3 }}>
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                    <Box sx={{ mt: 2 }}>
+                      <Typography variant="caption" color="text.secondary" gutterBottom sx={{ fontSize: '0.75rem' }}>
                         Extraction Confidence
                       </Typography>
                       <LinearProgress
                         variant="determinate"
                         value={extractedData.confidence * 100}
                         sx={{
-                          height: 8,
-                          borderRadius: 4,
-                          mb: 1,
+                          height: 6,
+                          borderRadius: 3,
+                          mb: 0.5,
                           backgroundColor: alpha(theme.palette.primary.main, 0.1),
                           '& .MuiLinearProgress-bar': {
-                            borderRadius: 4,
+                            borderRadius: 3,
                             backgroundColor: extractedData.confidence > 0.8 
                               ? 'success.main' 
                               : extractedData.confidence > 0.6 
@@ -384,7 +399,7 @@ export default function ExtractionStep() {
                           }
                         }}
                       />
-                      <Typography variant="caption" color="text.secondary" align="right" sx={{ display: 'block' }}>
+                      <Typography variant="caption" color="text.secondary" align="right" sx={{ display: 'block', fontSize: '0.7rem' }}>
                         {Math.round(extractedData.confidence * 100)}% confidence
                       </Typography>
                     </Box>
@@ -395,27 +410,27 @@ export default function ExtractionStep() {
                     <Box 
                       component="details" 
                       sx={{ 
-                        mt: 3, 
-                        p: 2, 
+                        mt: 2, 
+                        p: 1.5, 
                         bgcolor: 'background.paper', 
                         borderRadius: 1,
                         border: '1px solid',
                         borderColor: 'divider'
                       }}
                     >
-                      <Box component="summary" sx={{ cursor: 'pointer', color: 'primary.main', mb: 1 }}>
+                      <Box component="summary" sx={{ cursor: 'pointer', color: 'primary.main', mb: 0.5, fontSize: '0.8rem' }}>
                         Show raw extraction data
                       </Box>
                       <Box 
                         component="pre" 
                         sx={{ 
-                          mt: 1, 
-                          p: 2, 
+                          mt: 0.5, 
+                          p: 1.5, 
                           bgcolor: alpha(theme.palette.primary.main, 0.05), 
                           borderRadius: 1,
-                          fontSize: '0.75rem',
+                          fontSize: '0.7rem',
                           overflow: 'auto',
-                          maxHeight: 200
+                          maxHeight: 150
                         }}
                       >
                         {rawText}
@@ -427,7 +442,7 @@ export default function ExtractionStep() {
                     <Alert 
                       severity="error" 
                       variant="outlined"
-                      sx={{ mt: 3 }}
+                      sx={{ mt: 2, fontSize: '0.875rem' }}
                     >
                       {error}
                     </Alert>
@@ -448,8 +463,8 @@ export default function ExtractionStep() {
       <Typography 
         variant="h6" 
         align="center" 
-        color="text.secondary"
-        sx={{ maxWidth: 600, mx: 'auto', mb: 4 }}
+      
+        sx={{ maxWidth: 600, mx: 'auto', mb: 4, color: theme.palette.primary.main }}
       >
         Extracting and verifying your identity information
       </Typography>

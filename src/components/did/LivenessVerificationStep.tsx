@@ -60,7 +60,7 @@ const PlaceholderContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundColor: alpha(theme.palette.primary.main, 0.05),
+  backgroundColor: alpha(theme.palette.primary.light, 1),
   color: theme.palette.text.secondary,
 }));
 
@@ -237,8 +237,8 @@ export default function LivenessVerificationStep() {
         <Typography 
           variant="h6" 
           align="center" 
-          color="text.secondary"
-          sx={{ maxWidth: 500, mx: 'auto', mb: 2 }}
+          // color="text.secondary"
+          sx={{ maxWidth: 500, mx: 'auto', mb: 2, color: theme.palette.primary.main }}
         >
           We need to verify that you're a real person. Please look at the camera and follow the instructions.
         </Typography>
@@ -303,7 +303,7 @@ export default function LivenessVerificationStep() {
           {!showCamera && !capturedImage && !isUploading && (
             <Button
               variant="contained"
-              color="primary"
+             
               size="large"
               startIcon={<CameraIcon />}
               onClick={startVerification}
@@ -311,6 +311,18 @@ export default function LivenessVerificationStep() {
                 mt: 2,
                 minWidth: 200,
                 py: 1.5,
+                backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                backgroundColor: 'transparent',
+                '&:hover': {
+                  backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                  backgroundColor: 'transparent',
+                  filter: 'brightness(1.05)',
+                },
+                '&.Mui-disabled': {
+                  color: '#fff',
+                  opacity: 1,
+                  backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                },
               }}
             >
               Start Verification

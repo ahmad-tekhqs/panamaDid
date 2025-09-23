@@ -274,11 +274,19 @@ export default function ImageSelectionStep() {
                     }}
                     sx={{ 
                       alignSelf: 'flex-end', 
-                      backdropFilter: 'blur(4px)',
-                      backgroundColor: alpha(theme.palette.primary.main, 0.8),
+                      backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                      backgroundColor: 'transparent',
                       '&:hover': {
-                        backgroundColor: theme.palette.primary.main
-                      }
+                        backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                        backgroundColor: 'transparent',
+                        filter: 'brightness(1.05)',
+                      },
+                      '&.Mui-disabled': {
+                        color: '#fff',
+                        opacity: 1,
+                        backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                      },
+                      
                     }}
                   >
                     Change
@@ -299,7 +307,22 @@ export default function ImageSelectionStep() {
                   mt: 2, 
                   minWidth: 180,
                   py: 1.5,
+                  backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                  backgroundColor: 'transparent',
+                  '&:hover': {
+                    backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                    backgroundColor: 'transparent',
+                    filter: 'brightness(1.05)',
+                  },
+                  '&.Mui-disabled': {
+                    color: '#fff',
+                    opacity: 1,
+                    backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                  },
                 }}
+
+
+                
               >
                 {isUploading ? 'Uploading...' : 'Upload Image'}
               </Button>

@@ -96,12 +96,13 @@ const GlowingBadge = styled(Box)(({ theme }) => ({
 const DataField = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'flex-start',
-  marginBottom: theme.spacing(2),
-  padding: theme.spacing(1.5),
+  marginBottom: theme.spacing(1),
+  padding: theme.spacing(0.75, 1),
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.primary.main, 0.05),
+  backgroundColor: alpha(theme.palette.primary.main, 0.03),
+  transition: 'background-color 0.2s ease',
   '&:hover': {
-    backgroundColor: alpha(theme.palette.primary.main, 0.08),
+    backgroundColor: alpha(theme.palette.primary.main, 0.06),
   }
 }));
 
@@ -168,13 +169,13 @@ export default function DIDProfileView() {
   return (
     <Container maxWidth="lg" sx={{ py: 1 }}>
       <Typography 
-        variant="h4" 
-        component="h1" 
+        variant="h5" 
+        component="h2" 
         gutterBottom 
         sx={{ 
           textAlign: 'center', 
-          fontWeight: 700,
-          background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+          fontWeight: 600,
+          background: theme.palette.primary.main,
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           mb: 4
@@ -236,7 +237,7 @@ export default function DIDProfileView() {
               sx={{ fontWeight: 500, px: 1 }}
             />
             <Typography variant="caption" color="text.secondary">
-              {state.didData.txTimestamp ? formatTimestamp(state.didData.txTimestamp) : 'Not available'}
+              {state.didData.txTimestamp ? formatTimestamp(state.didData.txTimestamp) : 'Verification time not available'}
             </Typography>
           </Stack>
         </Stack>
@@ -275,27 +276,31 @@ export default function DIDProfileView() {
       {/* Tab Content */}
       <Box sx={{ display: activeTab === 0 ? 'block' : 'none' }}>
         <ProfileSection>
-          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 3, fontWeight: 500 }}>
+          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 2, fontWeight: 500, fontSize: '1.1rem' }}>
             Identity Information
           </Typography>
           
-          <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
             <Box sx={{ flex: 1 }}>
               <DataField>
-                <PersonIcon sx={{ color: 'primary.main', mr: 2 }} />
+                <PersonIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt:0.5 }} />
                 <Box>
-                  <Typography variant="body2" color="text.secondary">Full Name</Typography>
-                  <Typography variant="body1" fontWeight={500}>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                    Full Name
+                  </Typography>
+                  <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
                     {state.didData.fullName || 'Not available'}
                   </Typography>
                 </Box>
               </DataField>
               
               <DataField>
-                <AccessTimeIcon sx={{ color: 'primary.main', mr: 2 }} />
+                <AccessTimeIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt:0.5 }} />
                 <Box>
-                  <Typography variant="body2" color="text.secondary">Date of Birth</Typography>
-                  <Typography variant="body1" fontWeight={500}>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                    Date of Birth
+                  </Typography>
+                  <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
                     {state.didData.dateOfBirth || 'Not available'}
                   </Typography>
                 </Box>
@@ -304,20 +309,24 @@ export default function DIDProfileView() {
             
             <Box sx={{ flex: 1 }}>
               <DataField>
-                <AssignmentIcon sx={{ color: 'primary.main', mr: 2 }} />
+                <AssignmentIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt:0.5 }} />
                 <Box>
-                  <Typography variant="body2" color="text.secondary">Document Number</Typography>
-                  <Typography variant="body1" fontWeight={500}>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                    Document Number
+                  </Typography>
+                  <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
                     {state.didData.documentNumber || 'Not available'}
                   </Typography>
                 </Box>
               </DataField>
               
               <DataField>
-                <VerifiedUserIcon sx={{ color: 'primary.main', mr: 2 }} />
+                <VerifiedUserIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt:0.5 }} />
                 <Box>
-                  <Typography variant="body2" color="text.secondary">Document Type</Typography>
-                  <Typography variant="body1" fontWeight={500}>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                    Document Type
+                  </Typography>
+                  <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
                     {state.didData.documentType || 'Not available'}
                   </Typography>
                 </Box>
@@ -327,19 +336,21 @@ export default function DIDProfileView() {
           
           {/* Additional extracted details if available */}
           {state.didData.documentDetails && state.didData.documentDetails.metadata && (
-            <Box sx={{ mt: 3 }}>
-              <Divider sx={{ my: 3 }} />
-              <Typography variant="subtitle1" gutterBottom color="text.secondary">
+            <Box sx={{ mt: 2 }}>
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="subtitle2" gutterBottom color="text.secondary" sx={{ fontSize: '0.8rem', mb: 1.5 }}>
                 Additional Details
               </Typography>
               
-              <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+              <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                 {state.didData.documentDetails.metadata.issuingCountry && (
                   <Box sx={{ flex: 1 }}>
                     <DataField>
                       <Box>
-                        <Typography variant="body2" color="text.secondary">Issuing Country</Typography>
-                        <Typography variant="body1" fontWeight={500}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                          Issuing Country
+                        </Typography>
+                        <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
                           {state.didData.documentDetails.metadata.issuingCountry}
                         </Typography>
                       </Box>
@@ -351,8 +362,10 @@ export default function DIDProfileView() {
                   <Box sx={{ flex: 1 }}>
                     <DataField>
                       <Box>
-                        <Typography variant="body2" color="text.secondary">Document Type</Typography>
-                        <Typography variant="body1" fontWeight={500}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                          Document Type
+                        </Typography>
+                        <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
                           {state.didData.documentDetails.metadata.documentType}
                         </Typography>
                       </Box>
@@ -364,8 +377,10 @@ export default function DIDProfileView() {
                   <Box sx={{ flex: 1 }}>
                     <DataField>
                       <Box>
-                        <Typography variant="body2" color="text.secondary">Gender</Typography>
-                        <Typography variant="body1" fontWeight={500}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                          Gender
+                        </Typography>
+                        <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
                           {state.didData.documentDetails.gender}
                         </Typography>
                       </Box>
@@ -590,17 +605,19 @@ export default function DIDProfileView() {
       
       <Box sx={{ display: activeTab === 3 ? 'block' : 'none' }}>
         <ProfileSection>
-          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 3, fontWeight: 500 }}>
+          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 2, fontWeight: 500, fontSize: '1.1rem' }}>
             Wallet Details
           </Typography>
           
-          <Stack spacing={3}>
+          <Stack spacing={2}>
             <DataField>
-              <WalletIcon sx={{ color: 'primary.main', mr: 2 }} />
+              <WalletIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem' }} />
               <Box sx={{ width: '100%' }}>
-                <Typography variant="body2" color="text.secondary">Connected Address</Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                  Connected Address
+                </Typography>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
-                  <Typography variant="body1" fontWeight={500} sx={{ wordBreak: 'break-all' }}>
+                  <Typography variant="body2" fontWeight={500} sx={{ wordBreak: 'break-all', fontSize: '0.875rem' }}>
                     {state.didData.walletAddress || 'Not connected'}
                   </Typography>
                   {state.didData.walletAddress && (
@@ -622,21 +639,25 @@ export default function DIDProfileView() {
             </DataField>
             
             <DataField>
-              <VerifiedUserIcon sx={{ color: 'primary.main', mr: 2 }} />
+              <VerifiedUserIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem' }} />
               <Box>
-                <Typography variant="body2" color="text.secondary">Network</Typography>
-                <Typography variant="body1" fontWeight={500}>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                  Network
+                </Typography>
+                <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
                   RYT Dev Testnet
                 </Typography>
               </Box>
             </DataField>
             
             <DataField>
-              <LinkOffIcon sx={{ color: 'primary.main', mr: 2 }} />
+              <LinkOffIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem' }} />
               <Box>
-                <Typography variant="body2" color="text.secondary">Wallet Connection</Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
+                  Wallet Connection
+                </Typography>
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <Typography variant="body1" fontWeight={500}>
+                  <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
                     {state.didData.walletAddress ? 'Connected' : 'Not Connected'}
                   </Typography>
                   <Chip 
@@ -644,6 +665,7 @@ export default function DIDProfileView() {
                     label={state.didData.walletAddress ? "Active" : "Inactive"} 
                     color={state.didData.walletAddress ? "success" : "default"}
                     variant="outlined"
+                    sx={{ fontSize: '0.7rem', height: '20px' }}
                   />
                 </Stack>
               </Box>

@@ -10,7 +10,7 @@ const primaryDarkerColor = '#003D70'; // deepest hover/focus tone
 const primaryLight = '#EAF1FC';
 
 // Accent = Panama Red (use as secondary)
-const accentRed = '#EF3340';
+const accentRed = '#D8131B';
 const accentRedLight = '#F36A75';
 const accentRedDark = '#B51C2A';
 

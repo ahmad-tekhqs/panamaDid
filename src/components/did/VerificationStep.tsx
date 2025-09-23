@@ -81,7 +81,7 @@ const ScanEffect = styled(Box)(({ theme }) => ({
   left: 0,
   right: 0,
   height: '2px',
-  background: `linear-gradient(90deg, ${alpha(theme.palette.primary.main, 0)}, ${theme.palette.primary.main}, ${alpha(theme.palette.primary.main, 0)})`,
+  background: `linear-gradient(90deg, ${alpha(theme.palette.secondary.main, 0)}, ${theme.palette.primary.main}, ${alpha(theme.palette.secondary.main, 0)})`,
   backgroundSize: '200% 200%',
   animation: `${glowScan} 2s ease-in-out infinite`,
   boxShadow: `0 0 10px ${theme.palette.primary.main}, 0 0 20px ${theme.palette.primary.main}`,
@@ -95,9 +95,9 @@ const VerificationSuccessIcon = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  background: `linear-gradient(135deg, ${theme.palette.success.light}, ${theme.palette.success.main})`,
+  background: `linear-gradient(135deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
   color: theme.palette.common.white,
-  boxShadow: `0 10px 20px ${alpha(theme.palette.success.main, 0.4)}`,
+  boxShadow: `0 10px 20px ${alpha(theme.palette.primary.main, 0.4)}`,
   animation: `${float} 3s ease-in-out infinite`,
   '& svg': {
     fontSize: 60,
@@ -241,7 +241,7 @@ export default function VerificationStep() {
               variant="h5" 
               sx={{ 
                 fontWeight: 600,
-                background: `linear-gradient(90deg, ${theme.palette.success.main}, ${theme.palette.primary.main})`,
+                background: `linear-gradient(90deg,${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 mb: 1

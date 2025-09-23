@@ -116,10 +116,10 @@ function DIDCreationContent() {
                 p: 1,
                 color: 'white'
               }}>
-                <CheckCircleIcon fontSize="large" />
+                <CheckCircleIcon fontSize="medium" />
               </Box>
             </Box>
-            <Typography variant="h5" fontWeight="medium" color="text.primary" gutterBottom align="center" sx={{ mb: 1 }}>
+            <Typography variant="h6" fontWeight="medium" color="text.primary" gutterBottom align="center" sx={{ mb: 1 }}>
               DID Successfully Created!
             </Typography>
             
