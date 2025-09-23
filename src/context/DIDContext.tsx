@@ -176,7 +176,6 @@ export const DIDProvider: React.FC<DIDProviderProps> = ({ children }) => {
              nextStep === CreationStep.EXTRACTION)) {
           nextStep = CreationStep.VERIFICATION;
         }
-        debugger;
         switch (nextStep) {
           case CreationStep.WALLET_CONNECTION:
             score = 10;

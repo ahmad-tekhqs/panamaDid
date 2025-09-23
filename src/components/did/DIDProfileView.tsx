@@ -335,7 +335,7 @@ export default function DIDProfileView() {
           </Stack>
           
           {/* Additional extracted details if available */}
-          {state.didData.documentDetails && state.didData.documentDetails.metadata && (
+          {/* {state.didData.documentDetails && state.didData.documentDetails.metadata && (
             <Box sx={{ mt: 2 }}>
               <Divider sx={{ my: 2 }} />
               <Typography variant="subtitle2" gutterBottom color="text.secondary" sx={{ fontSize: '0.8rem', mb: 1.5 }}>
@@ -389,7 +389,7 @@ export default function DIDProfileView() {
                 )}
               </Stack>
             </Box>
-          )}
+          )} */}
           
           {/* Confidence score if available */}
           {/* {state.didData.documentDetails && state.didVerificationScore && (
