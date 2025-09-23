@@ -13,6 +13,7 @@ import {
   alpha,
   styled
 } from '@mui/material';
+import Footer from '../../components/Footer';
 
 // Country flag mapping
 const countryFlags: Record<string, string> = {
@@ -142,8 +143,7 @@ export default function WelcomePage() {
     <Box sx={{ 
       minHeight: '100vh',
       display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      flexDirection: 'column',
       position: 'relative',
       overflow: 'hidden',
       color: '#2c3e50',
@@ -169,7 +169,7 @@ export default function WelcomePage() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100%',
+        flex: 1,
       }}>
         <Box sx={{
           animation: `${slideUp} 1s ease-out`,
@@ -310,6 +310,9 @@ export default function WelcomePage() {
         background: 'radial-gradient(circle at center, rgba(155, 89, 182, 0.12) 0%, rgba(155, 89, 182, 0) 70%)',
         animation: `${pulse} 5s infinite ease-in-out`,
       }} />
+      
+      {/* Footer */}
+      <Footer />
     </Box>
   );
 } 

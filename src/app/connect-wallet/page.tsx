@@ -16,6 +16,7 @@ import {
   alpha,
   styled
 } from '@mui/material';
+import Footer from '../../components/Footer';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import NetworkWifiIcon from '@mui/icons-material/NetworkWifi';
@@ -272,8 +273,7 @@ export default function ConnectWalletPage() {
     <Box sx={{ 
       minHeight: '100vh',
       display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      flexDirection: 'column',
       position: 'relative',
       overflow: 'hidden',
       color: '#2c3e50',
@@ -293,14 +293,14 @@ export default function ConnectWalletPage() {
       }} />
       
       {/* Content */}
-      <Container maxWidth="md" sx={{ 
+      <Container maxWidth="md" sx={{
         textAlign: 'center',
         zIndex: 1,
         position: 'relative',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100%',
+        flex: 1,
       }}>
         <Box sx={{
           animation: `${slideUp} 1s ease-out`,
@@ -506,13 +506,13 @@ export default function ConnectWalletPage() {
                     sx={{
                       width: '100px',
                       height: '100px',
-                      borderRadius: '50%',
+                      borderRadius: '30%',
                       background: `radial-gradient(circle at center, ${alpha('#27ae60', 0.3)} 0%, ${alpha('#27ae60', 0.1)} 70%)`,
                       border: '2px solid #27ae60',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      marginBottom: 2,
+                      marginBottom: 0.5,
                       animation: `${pulse} 2s infinite`,
                     }}
                   >
@@ -523,7 +523,7 @@ export default function ConnectWalletPage() {
                     variant="h6" 
                     sx={{ 
                       fontWeight: 500,
-                      color: '#27ae60',
+                      color: '#052457',
                       marginBottom: 2,
                     }}
                   >
@@ -534,10 +534,11 @@ export default function ConnectWalletPage() {
                     icon={<CheckCircleOutlineIcon />}
                     label={`${account.slice(0, 6)}...${account.slice(-4)}`}
                     sx={{ 
-                      marginBottom: 4,
+                      marginBottom: 0,
                       fontSize: '1rem',
-                      py: 1.5,
-                      px: 2,
+                      py: 1,
+                      px: 1,
+                      color: '#052457',
                     }}
                   />
                   
@@ -551,6 +552,7 @@ export default function ConnectWalletPage() {
             </Paper>
           </Box>
         </Box>
+       
       </Container>
       
       {/* Decorative elements */}
@@ -575,6 +577,9 @@ export default function ConnectWalletPage() {
         background: 'radial-gradient(circle at center, rgba(155, 89, 182, 0.12) 0%, rgba(155, 89, 182, 0) 70%)',
         animation: `${pulse} 5s infinite ease-in-out`,
       }} />
+      
+      {/* Footer */}
+      <Footer />
     </Box>
   );
 } 

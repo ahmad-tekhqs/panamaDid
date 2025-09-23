@@ -8,6 +8,7 @@ import { Button, Box, Typography, Paper, Chip } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import Footer from '../../components/Footer';
 
 // Add window.ethereum type declaration
 declare global {
@@ -163,8 +164,8 @@ function DIDCreationContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-black">
-      <div className="max-w-4xl w-full bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8">
+    <div className="min-h-screen flex flex-col p-4 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-black">
+      <div className="max-w-4xl w-full mx-auto flex-grow bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8">
         <div className="flex flex-col items-center justify-center mb-8">
           <div className="h-28 w-60 relative">
             <Image 
@@ -238,7 +239,10 @@ function DIDCreationContent() {
             {state.currentStep === CreationStep.COMPLETED ? 'Finished' : 'Next'}
           </Button>
         </div>
+      <Footer />
       </div>
+      
+      {/* Footer */}
     </div>
   );
 }
