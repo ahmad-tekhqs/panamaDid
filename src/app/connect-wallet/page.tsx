@@ -75,13 +75,13 @@ const rotateGradient = keyframes`
 const GradientBackdrop = styled(Box)(({ theme }) => ({
   position: 'absolute',
   inset: 0,
-  background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+  background: 'linear-gradient(270deg, #D4E6FF 0%, #F8FBFF 50%, #FFFFFF 100%)',
   zIndex: -2,
   '&::before': {
     content: '""',
     position: 'absolute',
     inset: 0,
-    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 27, 75, 0.7) 50%, rgba(30, 22, 60, 0.8) 100%)',
+    background: 'linear-gradient(270deg, rgba(212, 230, 255, 0.9) 0%, rgba(248, 251, 255, 0.7) 50%, rgba(255, 255, 255, 0.8) 100%)',
     zIndex: 1,
   }
 }));
@@ -106,7 +106,7 @@ const GridLines = styled(Box)(({ theme }) => ({
 }));
 
 const WalletButton = styled(Button)(({ theme }) => ({
-  backgroundColor: alpha('#ffffff', 0.2),
+  background: 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)',
   color: 'white',
   padding: '12px 32px',
   borderRadius: '32px',
@@ -117,11 +117,12 @@ const WalletButton = styled(Button)(({ theme }) => ({
   position: 'relative',
   overflow: 'hidden',
   transition: 'all 0.3s ease',
-  boxShadow: '0 10px 20px rgba(255, 255, 255, 0.15)',
+  boxShadow: '0 10px 25px rgba(52, 152, 219, 0.3)',
+  border: 'none',
   '&:hover': {
-    backgroundColor: alpha('#ffffff', 0.3),
+    background: 'linear-gradient(135deg, #2980b9 0%, #1abc9c 100%)',
     transform: 'translateY(-3px)',
-    boxShadow: '0 15px 30px rgba(255, 255, 255, 0.2)',
+    boxShadow: '0 15px 35px rgba(52, 152, 219, 0.4)',
   },
   '&::before': {
     content: '""',
@@ -184,16 +185,18 @@ const PatternOverlay = styled(Box)(({ theme }) => ({
   position: 'absolute',
   inset: 0,
   backgroundImage: `
-    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
-    linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%),
-    linear-gradient(-45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%)
+    radial-gradient(circle at 20% 20%, rgba(52, 152, 219, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 30%, rgba(155, 89, 182, 0.06) 0%, transparent 35%),
+    radial-gradient(circle at 60% 80%, rgba(52, 152, 219, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 30% 70%, rgba(46, 204, 113, 0.04) 0%, transparent 30%),
+    linear-gradient(45deg, transparent 48%, rgba(52, 152, 219, 0.02) 50%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, rgba(155, 89, 182, 0.015) 50%, transparent 52%)
   `,
-  backgroundSize: '400px 400px, 300px 300px, 200px 200px, 200px 200px',
-  backgroundPosition: '0 0, 100px 100px, 0 0, 0 0',
+  backgroundSize: '600px 600px, 450px 450px, 380px 380px, 320px 320px, 120px 120px, 120px 120px',
+  backgroundPosition: '0 0, 200px 100px, 400px 300px, 100px 400px, 0 0, 60px 60px',
   zIndex: -1,
-  opacity: 0.6,
-  animation: `${pulse} 20s infinite ease-in-out`,
+  opacity: 0.7,
+  animation: `${pulse} 25s infinite ease-in-out`,
 }));
 // Main component
 export default function ConnectWalletPage() {
@@ -273,47 +276,19 @@ export default function ConnectWalletPage() {
       justifyContent: 'center',
       position: 'relative',
       overflow: 'hidden',
-      color: 'white',
+      color: '#2c3e50',
     }}>
       {/* Background */}
       <GradientBackdrop />
       <PatternOverlay />
       {/* <GridLines /> */}
       
-      {/* Flag background */}
-      <Box sx={{
-        position: 'absolute',
-        inset: 0,
-        zIndex: -1,
-        opacity: 0.15,
-        animation: `${pulse} 8s infinite ease-in-out`,
-      }}>
-        <Image 
-          src={countryFlags[country] || countryFlags.default}
-          alt={`${countryNames[country]} Flag Background`}
-          fill
-          style={{ 
-            objectFit: 'cover',
-            opacity: 0.15
-          }}
-        />
-      </Box>
       
-      {/* Radial gradient overlay */}
+      {/* Subtle overlay for depth */}
       <Box sx={{
         position: 'absolute',
         inset: 0,
-        background: 'radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.6) 100%)',
-        zIndex: -1,
-      }} />
-
-      {/* Network lines animation */}
-      <Box sx={{
-        position: 'absolute',
-        inset: 0,
-        background: 'url(/assets/network-lines.svg)',
-        backgroundSize: 'cover',
-        opacity: 0.07,
+        background: 'radial-gradient(circle at center, transparent 40%, rgba(52, 152, 219, 0.03) 100%)',
         zIndex: -1,
       }} />
       
@@ -347,33 +322,36 @@ export default function ConnectWalletPage() {
             </LogoContainer>
             
             <Typography 
-              variant="h2" 
-              component="h1"
+              variant="h3" 
+              component="h3"
               sx={{
                 fontWeight: 800,
                 marginBottom: 2,
                 animation: `${fadeIn} 1s ease-out`,
                 letterSpacing: '0.02em',
-                textShadow: '0 0 20px rgba(255, 255, 255, 0.3)',
-                fontSize: { xs: '2.5rem', md: '4rem' }
+                background: 'linear-gradient(90deg, #052457 0%, #052457 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                fontSize: { xs: '2rem', md: '3rem' }
               }}
             >
-              Connect Your Wallet
+              Conecte su billetera
             </Typography>
             
             <Typography 
               variant="h5"
               sx={{
-                color: 'rgba(255,255,255,0.9)',
+                color: 'rgba(44, 62, 80, 0.8)',
                 marginBottom: 6,
-                fontWeight: 300,
+                fontWeight: 400,
                 maxWidth: '650px',
                 mx: 'auto',
                 animation: `${fadeIn} 1s ease-out 0.5s both, ${slideUp} 1s ease-out 0.5s both`,
                 fontSize: { xs: '1.25rem', md: '1.5rem' }
               }}
             >
-              To begin the DID creation process in <span style={{ color: '#ffffff', fontWeight: 500 }}>{countryNames[country]}</span>, please connect your wallet
+            Emita su DID en minutos para acceder de forma segura a servicios del Gobierno y aliados.
             </Typography>
           </Box>
           
@@ -383,15 +361,16 @@ export default function ConnectWalletPage() {
             display: 'flex',
             justifyContent: 'center',
           }}>
-            <Paper elevation={10} sx={{
+            <Paper elevation={20} sx={{
               padding: '2.5rem',
-              background: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)',
+              background: 'rgba(255, 255, 255, 0.9)',
+              backdropFilter: 'blur(20px)',
               borderRadius: '24px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
+              border: '1px solid rgba(52, 152, 219, 0.2)',
               width: { xs: '90%', sm: '450px' },
               position: 'relative',
               overflow: 'hidden',
+              boxShadow: '0 20px 40px rgba(52, 152, 219, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05)',
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -399,8 +378,8 @@ export default function ConnectWalletPage() {
                 left: 0,
                 right: 0,
                 height: '3px',
-                background: 'linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1), rgba(255, 255, 255, 0))',
-                animation: `${shimmer} 10s infinite linear`,
+                background: 'linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.6), transparent)',
+                animation: `${shimmer} 8s infinite linear`,
               }
             }}>
               {isChecking ? (
@@ -414,14 +393,14 @@ export default function ConnectWalletPage() {
                     size={60} 
                     thickness={4}
                     sx={{ 
-                      color: '#ffffff',
+                      color: '#3498db',
                       marginBottom: 2,
                     }}
                   />
                   <Typography 
                     variant="body1"
                     sx={{ 
-                      color: alpha('#fff', 0.9),
+                      color: '#2c3e50',
                       fontWeight: 500,
                       marginTop: 2,
                     }}
@@ -433,7 +412,7 @@ export default function ConnectWalletPage() {
                     position: 'relative',
                     width: '100%',
                     height: '3px',
-                    background: alpha('#ffffff', 0.1),
+                    background: alpha('#3498db', 0.2),
                     borderRadius: '4px',
                     overflow: 'hidden',
                   }}>
@@ -445,7 +424,7 @@ export default function ConnectWalletPage() {
                         height: '100%',
                         width: '30%',
                         borderRadius: '4px',
-                        background: `linear-gradient(90deg, transparent, ${alpha('#ffffff', 0.9)}, transparent)`,
+                        background: `linear-gradient(90deg, transparent, ${alpha('#3498db', 0.8)}, transparent)`,
                         animation: `${shimmer} 1.5s infinite`,
                       }}
                     />
@@ -458,7 +437,8 @@ export default function ConnectWalletPage() {
                     height: '100px',
                     margin: '0 auto 24px',
                     borderRadius: '50%',
-                    backgroundColor: alpha('#ffffff', 0.1),
+                    background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%)',
+                    border: '2px solid rgba(52, 152, 219, 0.2)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -467,7 +447,7 @@ export default function ConnectWalletPage() {
                     <AccountBalanceWalletOutlinedIcon 
                       sx={{ 
                         fontSize: '50px', 
-                        color: '#ffffff' 
+                        color: '#3498db' 
                       }} 
                     />
                   </Box>
@@ -475,7 +455,7 @@ export default function ConnectWalletPage() {
                   <Typography 
                     variant="h6" 
                     sx={{ 
-                      color: 'white',
+                      color: '#2c3e50',
                       marginBottom: 3,
                       fontWeight: 500,
                     }}
@@ -514,7 +494,8 @@ export default function ConnectWalletPage() {
                       width: '100px',
                       height: '100px',
                       borderRadius: '50%',
-                      background: `radial-gradient(circle at center, ${alpha('#ffffff', 0.6)} 0%, ${alpha('#ffffff', 0.1)} 70%)`,
+                      background: `radial-gradient(circle at center, ${alpha('#27ae60', 0.3)} 0%, ${alpha('#27ae60', 0.1)} 70%)`,
+                      border: '2px solid #27ae60',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -522,14 +503,14 @@ export default function ConnectWalletPage() {
                       animation: `${pulse} 2s infinite`,
                     }}
                   >
-                    <CheckCircleOutlineIcon sx={{ fontSize: 60, color: '#8bff8a' }} />
+                    <CheckCircleOutlineIcon sx={{ fontSize: 60, color: '#27ae60' }} />
                   </Box>
                   
                   <Typography 
                     variant="h6" 
                     sx={{ 
                       fontWeight: 500,
-                      color: '#8bff8a',
+                      color: '#27ae60',
                       marginBottom: 2,
                     }}
                   >
@@ -547,7 +528,7 @@ export default function ConnectWalletPage() {
                     }}
                   />
                   
-                  <Typography sx={{ color: alpha('#fff', 0.8) }}>
+                  <Typography sx={{ color: alpha('#2c3e50', 0.7) }}>
                     Redirecting to DID creation...
                   </Typography>
                   
@@ -567,7 +548,7 @@ export default function ConnectWalletPage() {
         width: { xs: 80, md: 120 },
         height: { xs: 80, md: 120 },
         borderRadius: '50%',
-        background: 'radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 70%)',
+        background: 'radial-gradient(circle at center, rgba(52, 152, 219, 0.15) 0%, rgba(52, 152, 219, 0) 70%)',
         animation: `${pulse} 4s infinite ease-in-out`,
       }} />
       
@@ -578,7 +559,7 @@ export default function ConnectWalletPage() {
         width: { xs: 100, md: 150 },
         height: { xs: 100, md: 150 },
         borderRadius: '50%',
-        background: 'radial-gradient(circle at center, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 70%)',
+        background: 'radial-gradient(circle at center, rgba(155, 89, 182, 0.12) 0%, rgba(155, 89, 182, 0) 70%)',
         animation: `${pulse} 5s infinite ease-in-out`,
       }} />
     </Box>
