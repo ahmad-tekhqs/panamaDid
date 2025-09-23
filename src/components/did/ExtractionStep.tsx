@@ -168,6 +168,7 @@ export default function ExtractionStep() {
     const performExtraction = async () => {
       try {
         // If already completed, just show the data
+        debugger;
         if (state.didData.extractedInfo) {
           setExtractionPhase('complete');
           setExtractedData(state.didData.documentDetails as IDInformation || mockExtractedData);

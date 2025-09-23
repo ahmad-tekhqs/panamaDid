@@ -176,7 +176,7 @@ export const DIDProvider: React.FC<DIDProviderProps> = ({ children }) => {
              nextStep === CreationStep.EXTRACTION)) {
           nextStep = CreationStep.VERIFICATION;
         }
-        
+        debugger;
         switch (nextStep) {
           case CreationStep.WALLET_CONNECTION:
             score = 10;
@@ -191,13 +191,13 @@ export const DIDProvider: React.FC<DIDProviderProps> = ({ children }) => {
             score = 35;
             break;
           case CreationStep.EXTRACTION:
-            score = 60;
+            score = 55;
             break;
           case CreationStep.VERIFICATION:
             score = prevState.skippedIDVerification ? 40 : 75;
             break;
           case CreationStep.MINTING:
-            score = prevState.skippedIDVerification ? 60 : 92;
+            score = prevState.skippedIDVerification ? 60 : 94;
             break;
           case CreationStep.COMPLETED:
             score = 100;
