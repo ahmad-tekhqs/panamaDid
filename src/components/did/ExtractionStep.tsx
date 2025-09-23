@@ -241,7 +241,7 @@ export default function ExtractionStep() {
               backgroundColor: alpha(theme.palette.primary.light, 1),
               '& .MuiLinearProgress-bar': {
                 borderRadius: 5,
-                background: `linear-gradient(90deg, ${theme.palette.secondary.main} 100%, ${theme.palette.primary.light} 100%)`,
+                background: `linear-gradient(90deg, ${theme.palette.secondary.main} 0%, ${theme.palette.primary.light} 100%)`,
               }
             }} 
           />

@@ -330,7 +330,7 @@ export default function LivenessVerificationStep() {
           )}
           
           {/* Skip Verification option */}
-          {/* {!showCamera && !capturedImage && !isUploading && (
+          {!showCamera && !capturedImage && !isUploading && (
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 3 }}>
               <Divider sx={{ width: '80%', mb: 3 }}>
                 <Typography variant="caption" color="text.secondary">OR</Typography>
@@ -357,7 +357,7 @@ export default function LivenessVerificationStep() {
                 </Typography>
               </Stack>
             </Box>
-          )} */}
+          )}
         </Box>
       </Stack>
 

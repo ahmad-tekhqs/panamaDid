@@ -115,6 +115,7 @@ function DIDCreationContent() {
                 borderRadius: '50%',
                 p: 1,
                 color: 'white'
+                
               }}>
                 <CheckCircleIcon fontSize="medium" />
               </Box>

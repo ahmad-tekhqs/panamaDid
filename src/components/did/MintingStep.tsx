@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDIDContext } from '../../context/DIDContext';
 import { ethers } from 'ethers';
 import { createDidMetadata, mintDidToken } from '@/utils/contractUtils';
+
 import { CreationStep } from '@/types/did';
 import {
   Box,
@@ -137,11 +138,11 @@ const SuccessBox = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundColor: theme.palette.success.main,
+  backgroundColor: theme.palette.primary.main,
   color: theme.palette.common.white,
   margin: '0 auto',
   animation: `${float} 3s ease-in-out infinite`,
-  boxShadow: `0 10px 25px ${alpha(theme.palette.success.main, 0.4)}`,
+  boxShadow: `0 10px 25px ${alpha(theme.palette.primary.main, 0.7)}`,
   '& svg': {
     fontSize: 40,
   },
@@ -408,7 +409,7 @@ export default function MintingStep() {
                     backgroundColor: alpha('#005EB8', 0.1),
                     '& .MuiLinearProgress-bar': {
                       borderRadius: 4,
-                      background: `linear-gradient(90deg, #005EB8, ${alpha('#005EB8', 0.7)})`,
+                      background: `linear-gradient(90deg, #052457, ${alpha('#D8131B', 0.7)})`,
                     }
                   }} 
                 />
@@ -440,7 +441,7 @@ export default function MintingStep() {
                 sx={{ 
                   textAlign: 'center',
                   mb: 3,
-                  background: `linear-gradient(90deg, #005EB8, ${alpha('#005EB8', 0.7)})`,
+                  background: `linear-gradient(90deg, #052457, ${alpha('#D8131B', 1)})`,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   fontWeight: 600
@@ -458,7 +459,7 @@ export default function MintingStep() {
                   sx={{ 
                     position: 'relative',
                     zIndex: 1,
-                    color: '#005EB8',
+                    color: '#052457',
                     display: 'block',
                     mx: 'auto',
                   }}
@@ -482,7 +483,7 @@ export default function MintingStep() {
                     component="div"
                     sx={{ 
                       fontWeight: 'bold',
-                      color: '#005EB8',
+                      color: '#052457',
                       fontSize: '1rem'
                     }}
                   >
@@ -496,7 +497,7 @@ export default function MintingStep() {
                 sx={{ 
                   textAlign: 'center', 
                   mb: 3,
-                  color: '#005EB8',
+                  color: '#052457',
                   fontWeight: 500
                 }}
               >
@@ -512,7 +513,7 @@ export default function MintingStep() {
                     <Box sx={{ 
                       p: 1.5, 
                       borderRadius: 1, 
-                      bgcolor: alpha('#005EB8', 0.05),
+                      bgcolor: alpha('#052457', 0.5),
                       fontFamily: 'monospace',
                       fontSize: '0.75rem',
                       wordBreak: 'break-all'
@@ -560,7 +561,7 @@ export default function MintingStep() {
                   mt: 3,
                   mb: 2,
                   fontWeight: 700,
-                  background: `linear-gradient(90deg, ${theme.palette.success.main}, #005EB8)`,
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, #052457)`,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}
@@ -605,7 +606,7 @@ export default function MintingStep() {
                     variant="h6" 
                     sx={{ 
                       fontFamily: 'monospace',
-                      color: '#005EB8',
+                      color: '#052457',
                       fontWeight: 700,
                       letterSpacing: 0.5
                     }}
@@ -622,8 +623,8 @@ export default function MintingStep() {
                 variant="outlined" 
                 sx={{ 
                   mt: 4, 
-                  color: '#005EB8', 
-                  borderColor: alpha('#005EB8', 0.5),
+                  color: '#D4E6FF', 
+                  borderColor: alpha('#D4E6FF', 0.7),
                   px: 2,
                   py: 0.5,
                   animation: `${pulse} 2s infinite`

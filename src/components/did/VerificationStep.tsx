@@ -95,7 +95,7 @@ const VerificationSuccessIcon = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  background: `linear-gradient(135deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
+  background: theme.palette.primary.main,
   color: theme.palette.common.white,
   boxShadow: `0 10px 20px ${alpha(theme.palette.primary.main, 0.4)}`,
   animation: `${float} 3s ease-in-out infinite`,
@@ -318,7 +318,7 @@ export default function VerificationStep() {
           sx={{ 
             textAlign: 'center',
             fontWeight: 600,
-            background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+            background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent'
           }}
@@ -366,7 +366,7 @@ export default function VerificationStep() {
               backgroundColor: alpha(theme.palette.primary.main, 0.1),
               '& .MuiLinearProgress-bar': {
                 borderRadius: 4,
-                background: `linear-gradient(90deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
+                background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
               }
             }} 
           />

@@ -222,7 +222,7 @@ export default function ImageSelectionStep() {
             </DropzoneContainer>
             
             {/* Skip Verification option */}
-            {/* <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
               <Divider sx={{ width: '80%', mb: 3 }}>
                 <Typography variant="caption" color="text.secondary">OR</Typography>
               </Divider>
@@ -247,7 +247,7 @@ export default function ImageSelectionStep() {
                   and will use demo data instead of your real information.
                 </Typography>
               </Stack>
-            </Box> */}
+            </Box>
           </Box>
         </Fade>
       ) : (
