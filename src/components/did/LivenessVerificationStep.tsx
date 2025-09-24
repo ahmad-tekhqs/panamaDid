@@ -3,6 +3,30 @@
 import { useState, useRef, useEffect } from 'react';
 import { useDIDContext } from '../../context/DIDContext';
 
+// Face Detection API types
+interface FaceDetectorOptions {
+  fastMode?: boolean;
+  maxDetectedFaces?: number;
+}
+
+interface FaceDetector {
+  detect: (target: HTMLVideoElement | HTMLImageElement | HTMLCanvasElement) => Promise<DetectedFace[]>;
+}
+
+interface DetectedFace {
+  boundingBox: DOMRectReadOnly;
+  landmarks: any[];
+}
+
+// Extend Window interface for Face Detection API
+declare global {
+  interface Window { 
+    FaceDetector?: {
+      new(options?: FaceDetectorOptions): FaceDetector;
+    };
+  }
+}
+
 // Material UI imports
 import { 
   Box, 
@@ -12,26 +36,19 @@ import {
   CircularProgress, 
   Alert, 
   Fade, 
-  Card,
-  CardMedia,
-  CardContent,
   Stack,
   IconButton,
   useTheme,
   alpha,
   styled,
   Tooltip,
-  Backdrop,
-  Divider
+  Backdrop
 } from '@mui/material';
 import { 
   CameraAlt as CameraIcon,
   RestartAlt as RetakeIcon,
   FaceRetouchingNatural as FaceIcon,
-  Check as CheckIcon,
   Cancel as CancelIcon,
-  SkipNext as SkipNextIcon,
-  InfoOutlined as InfoOutlinedIcon
 } from '@mui/icons-material';
 
 // Styled components
@@ -123,30 +140,59 @@ const PulsingCircle = styled(Box)(({ theme }) => ({
   },
 }));
 
-// Add a new styled component for the skip button
-const SkipButton = styled(Button)(({ theme }) => ({
-  marginTop: theme.spacing(2),
-  marginBottom: theme.spacing(1),
-  borderRadius: theme.shape.borderRadius * 4,
-  backgroundColor: 'transparent',
-  color: theme.palette.grey[600],
-  border: `1px solid ${theme.palette.grey[300]}`,
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.grey[500], 0.1),
-    borderColor: theme.palette.grey[400],
-  },
-}));
 
 export default function LivenessVerificationStep() {
-  const { state, updateDIDData, markStepAsCompleted, skipIDVerification } = useDIDContext();
+  const { state, updateDIDData, markStepAsCompleted } = useDIDContext();
   const [showCamera, setShowCamera] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(state.didData.livenessImage || null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  
+  // Face detection states
+  const [faceDetected, setFaceDetected] = useState(false);
+  const [autoCapture, setAutoCapture] = useState(true);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const [useSimpleDetection, setUseSimpleDetection] = useState(false);
+  
+  // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const faceDetectorRef = useRef<FaceDetector | null>(null);
+  const faceCheckInterval = useRef<NodeJS.Timeout | null>(null);
+  const captureTimeout = useRef<NodeJS.Timeout | null>(null);
+  const captureInProgress = useRef(false);
+  
   const theme = useTheme();
+
+  // Initialize face detector
+  useEffect(() => {
+    if (window.FaceDetector) {
+      try {
+        faceDetectorRef.current = new window.FaceDetector({
+          fastMode: true,
+          maxDetectedFaces: 1,
+        });
+        console.log('Face detector initialized with native API');
+      } catch (error) {
+        console.error('Error initializing face detector:', error);
+        setUseSimpleDetection(true);
+      }
+    } else {
+      console.warn('Face Detection API not supported, using simple detection');
+      setUseSimpleDetection(true);
+    }
+
+    return () => {
+      // Cleanup intervals and timeouts
+      if (faceCheckInterval.current) {
+        clearInterval(faceCheckInterval.current);
+      }
+      if (captureTimeout.current) {
+        clearTimeout(captureTimeout.current);
+      }
+    };
+  }, []);
 
   // Check if we already have liveness data and mark step as completed
   useEffect(() => {
@@ -154,6 +200,30 @@ export default function LivenessVerificationStep() {
       markStepAsCompleted(true);
     }
   }, [capturedImage, state.isStepCompleted, markStepAsCompleted]);
+
+  // Start face detection when camera is active
+  useEffect(() => {
+    if (showCamera && !capturedImage) {
+      faceCheckInterval.current = setInterval(() => {
+        if (useSimpleDetection) {
+          detectFacesSimple();
+        } else {
+          detectFacesWithAPI();
+        }
+      }, 500); // Check every 500ms
+    } else {
+      if (faceCheckInterval.current) {
+        clearInterval(faceCheckInterval.current);
+        faceCheckInterval.current = null;
+      }
+    }
+
+    return () => {
+      if (faceCheckInterval.current) {
+        clearInterval(faceCheckInterval.current);
+      }
+    };
+  }, [showCamera, capturedImage, useSimpleDetection]);
 
   // Clean up camera stream when component unmounts
   useEffect(() => {
@@ -166,6 +236,10 @@ export default function LivenessVerificationStep() {
 
   const startVerification = async () => {
     setError(null);
+    setFaceDetected(false);
+    setCountdown(null);
+    captureInProgress.current = false;
+    
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { facingMode: "user" },
@@ -183,6 +257,139 @@ export default function LivenessVerificationStep() {
       console.error('Error accessing camera:', err);
       setError('Could not access camera. Please make sure you have granted camera permissions.');
     }
+  };
+
+  // Simple face detection using skin tone analysis
+  const detectFacesSimple = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+    
+    try {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      
+      // Only process if video is playing
+      if (video.readyState !== 4) return;
+      
+      // Set canvas size for analysis (small for performance)
+      canvas.width = 100;
+      canvas.height = 100;
+      
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      if (!ctx) return;
+      
+      // Draw center of video to canvas
+      const centerX = video.videoWidth / 2;
+      const centerY = video.videoHeight / 2;
+      ctx.drawImage(
+        video,
+        centerX - 100, centerY - 100, 200, 200,  // Source rectangle
+        0, 0, 100, 100                          // Destination rectangle
+      );
+      
+      // Get image data for skin tone analysis
+      const imageData = ctx.getImageData(0, 0, 100, 100);
+      const data = imageData.data;
+      
+      let skinPixelCount = 0;
+      const totalPixels = data.length / 4;
+      
+      // Simple skin tone detection
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        
+        // Basic skin tone heuristic
+        if (
+          r > 60 && g > 40 && b > 20 &&        // Lower bounds
+          r > g && r > b &&                    // Red dominant
+          Math.abs(r - g) > 15 &&              // Red-green difference
+          r - g > 15 && r - b > 15 &&          // Red significantly higher
+          Math.abs(g - b) < 15                 // Green and blue similar
+        ) {
+          skinPixelCount++;
+        }
+      }
+      
+      // Face detected if enough skin pixels found
+      const skinRatio = skinPixelCount / totalPixels;
+      const faceFound = skinRatio > 0.15; // Lowered threshold for better detection
+      
+      handleFaceDetection(faceFound);
+    } catch (error) {
+      console.error('Error in simple face detection:', error);
+    }
+  };
+
+  // Face detection using browser API
+  const detectFacesWithAPI = async () => {
+    if (!faceDetectorRef.current || !videoRef.current) return;
+    
+    try {
+      const faces = await faceDetectorRef.current.detect(videoRef.current);
+      const faceFound = faces.length > 0;
+      handleFaceDetection(faceFound);
+    } catch (error) {
+      console.error('Error in API face detection:', error);
+      // Fallback to simple detection
+      setUseSimpleDetection(true);
+    }
+  };
+
+  // Handle face detection result and auto-capture
+  const handleFaceDetection = (faceFound: boolean) => {
+    setFaceDetected(faceFound);
+    
+    if (faceFound && autoCapture && !captureInProgress.current && countdown === null) {
+      // Start countdown for auto-capture
+      setCountdown(3);
+      captureInProgress.current = true;
+      
+      const countdownInterval = setInterval(() => {
+        setCountdown(prev => {
+          if (prev === null || prev <= 1) {
+            clearInterval(countdownInterval);
+            // Auto-capture after countdown
+            setTimeout(() => {
+              performAutoCapture();
+            }, 100);
+            return null;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
+    } else if (!faceFound && captureTimeout.current) {
+      // Clear auto-capture if face disappears
+      clearTimeout(captureTimeout.current);
+      captureTimeout.current = null;
+      setCountdown(null);
+      captureInProgress.current = false;
+    }
+  };
+
+  // Perform automatic capture
+  const performAutoCapture = () => {
+    if (!canvasRef.current || !videoRef.current) return;
+    
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    // Draw video frame to canvas
+    const ctx = canvas.getContext('2d');
+    ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Get image data URL
+    const imageSrc = canvas.toDataURL('image/png');
+    handleCapture(imageSrc);
+    
+    // Reset capture state
+    captureInProgress.current = false;
+    setCountdown(null);
   };
 
   const handleCapture = (imageSrc: string) => {
@@ -237,11 +444,41 @@ export default function LivenessVerificationStep() {
         <Typography 
           variant="h6" 
           align="center" 
-          // color="text.secondary"
           sx={{ maxWidth: 500, mx: 'auto', mb: 2, color: theme.palette.primary.main }}
         >
-          We need to verify that you're a real person. Please look at the camera and follow the instructions.
+          {showCamera ? 
+            faceDetected ? 
+              countdown ? 
+                `Face detected! Auto-capturing in ${countdown}...` :
+                'Face detected! Capturing...' :
+              'Please position your face in the camera' :
+            'We need to verify that you\'re a real person. Please look at the camera and follow the instructions.'
+          }
         </Typography>
+        
+        {/* Face detection status indicator */}
+        {showCamera && (
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+            <Box
+              sx={{
+                width: 12,
+                height: 12,
+                borderRadius: '50%',
+                backgroundColor: faceDetected ? '#4caf50' : '#f44336',
+                mr: 1,
+                animation: faceDetected ? 'none' : 'pulse 1s infinite',
+                '@keyframes pulse': {
+                  '0%': { opacity: 1 },
+                  '50%': { opacity: 0.5 },
+                  '100%': { opacity: 1 },
+                },
+              }}
+            />
+            <Typography variant="caption" color={faceDetected ? 'success.main' : 'error.main'}>
+              {faceDetected ? 'Face detected' : 'Looking for face...'}
+            </Typography>
+          </Box>
+        )}
         
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
           {capturedImage ? (
@@ -262,7 +499,12 @@ export default function LivenessVerificationStep() {
               </CapturedImage>
             </Fade>
           ) : (
-            <CameraContainer elevation={3}>
+            <CameraContainer elevation={3} sx={{
+              border: faceDetected ? 
+                `3px solid ${theme.palette.success.main}` : 
+                `3px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+              transition: 'border-color 0.3s ease',
+            }}>
               {showCamera ? (
                 <Box sx={{ width: '100%', height: '100%', position: 'relative' }}>
                   <video 
@@ -276,6 +518,62 @@ export default function LivenessVerificationStep() {
                       transform: 'scaleX(-1)' // Mirror effect for selfie mode
                     }}
                   />
+                  
+                  {/* Countdown overlay */}
+                  {countdown !== null && (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 80,
+                        height: 80,
+                        borderRadius: '50%',
+                        backgroundColor: alpha(theme.palette.primary.main, 0.9),
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 10,
+                      }}
+                    >
+                      <Typography
+                        variant="h3"
+                        sx={{
+                          color: 'white',
+                          fontWeight: 'bold',
+                          animation: 'bounce 1s infinite',
+                          '@keyframes bounce': {
+                            '0%, 20%, 50%, 80%, 100%': { transform: 'translateY(0)' },
+                            '40%': { transform: 'translateY(-10px)' },
+                            '60%': { transform: 'translateY(-5px)' },
+                          },
+                        }}
+                      >
+                        {countdown}
+                      </Typography>
+                    </Box>
+                  )}
+                  
+                  {/* Face detection indicator */}
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 10,
+                      right: 10,
+                      padding: 1,
+                      borderRadius: 1,
+                      backgroundColor: alpha(
+                        faceDetected ? theme.palette.success.main : theme.palette.error.main, 
+                        0.8
+                      ),
+                      color: 'white',
+                    }}
+                  >
+                    <Typography variant="caption" fontWeight="bold">
+                      {faceDetected ? '✓' : '✗'}
+                    </Typography>
+                  </Box>
                 </Box>
               ) : (
                 <PlaceholderContainer>
@@ -301,32 +599,37 @@ export default function LivenessVerificationStep() {
           )}
           
           {!showCamera && !capturedImage && !isUploading && (
-            <Button
-              variant="contained"
-             
-              size="large"
-              startIcon={<CameraIcon />}
-              onClick={startVerification}
-              sx={{ 
-                mt: 2,
-                minWidth: 200,
-                py: 1.5,
-                backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
-                backgroundColor: 'transparent',
-                '&:hover': {
+            <Stack spacing={2} alignItems="center">
+              <Button
+                variant="contained"
+                size="large"
+                startIcon={<CameraIcon />}
+                onClick={startVerification}
+                sx={{ 
+                  mt: 2,
+                  minWidth: 200,
+                  py: 1.5,
                   backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
                   backgroundColor: 'transparent',
-                  filter: 'brightness(1.05)',
-                },
-                '&.Mui-disabled': {
-                  color: '#fff',
-                  opacity: 1,
-                  backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
-                },
-              }}
-            >
-              Start Verification
-            </Button>
+                  '&:hover': {
+                    backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                    backgroundColor: 'transparent',
+                    filter: 'brightness(1.05)',
+                  },
+                  '&.Mui-disabled': {
+                    color: '#fff',
+                    opacity: 1,
+                    backgroundImage: 'linear-gradient(90deg, #052457 0%, #0B4EBD 100%)',
+                  },
+                }}
+              >
+                Start Auto-Capture Verification
+              </Button>
+              
+              <Typography variant="caption" color="text.secondary" align="center" sx={{ maxWidth: 400 }}>
+                Face detection will automatically capture your photo when you look at the camera
+              </Typography>
+            </Stack>
           )}
           
           {/* Skip Verification option */}
@@ -361,7 +664,7 @@ export default function LivenessVerificationStep() {
         </Box>
       </Stack>
 
-      {/* Camera Capture UI */}
+      {/* Manual Cancel Option */}
       {showCamera && (
         <Box 
           sx={{ 
@@ -369,57 +672,24 @@ export default function LivenessVerificationStep() {
             bottom: 16, 
             left: '50%', 
             transform: 'translateX(-50%)',
-            display: 'flex',
-            gap: 2,
             zIndex: 10,
           }}
         >
-          <Tooltip title="Capture">
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={() => {
-                if (!canvasRef.current || !videoRef.current) return;
-                
-                const video = videoRef.current;
-                const canvas = canvasRef.current;
-                
-                // Set canvas dimensions to match video
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                
-                // Draw video frame to canvas
-                const ctx = canvas.getContext('2d');
-                ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                // Get image data URL
-                const imageSrc = canvas.toDataURL('image/png');
-                handleCapture(imageSrc);
-              }}
-              sx={{ 
-                borderRadius: '50%', 
-                minWidth: 'auto',
-                width: 56,
-                height: 56,
-              }}
-            >
-              <CheckIcon />
-            </Button>
-          </Tooltip>
-          
-          <Tooltip title="Cancel">
+          <Tooltip title="Cancel Auto-Capture">
             <Button
               color="error"
               variant="outlined"
               onClick={handleCancelCapture}
+              startIcon={<CancelIcon />}
               sx={{ 
-                borderRadius: '50%', 
-                minWidth: 'auto',
-                width: 56,
-                height: 56,
+                borderRadius: 25,
+                px: 3,
+                py: 1,
+                backgroundColor: alpha('#fff', 0.9),
+                backdropFilter: 'blur(10px)',
               }}
             >
-              <CancelIcon />
+              Cancel
             </Button>
           </Tooltip>
         </Box>
