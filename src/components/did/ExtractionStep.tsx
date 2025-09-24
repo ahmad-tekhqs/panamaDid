@@ -57,28 +57,33 @@ const InfoItem = styled(Box)(({ theme }) => ({
   }
 }));
 
-const SelfieImage = styled(Box)(({ theme }) => ({
+const ImageContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
-  width: '100%',
-  maxWidth: 200,
+  width: 240,
   height: 200,
   borderRadius: theme.shape.borderRadius * 2,
   overflow: 'hidden',
   boxShadow: '0 10px 20px rgba(0,0,0,0.15)',
   border: `2px solid ${theme.palette.primary.main}`,
   margin: '0 auto',
+  backgroundColor: alpha(theme.palette.primary.light, 0.1),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  '& img': {
+    maxWidth: '100%',
+    maxHeight: '100%',
+    objectFit: 'contain',
+  }
 }));
 
-const IDImage = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  width: '100%',
-  height: 200,
-  borderRadius: theme.shape.borderRadius * 2,
-  overflow: 'hidden',
-  boxShadow: '0 10px 20px rgba(0,0,0,0.15)',
-  border: `2px solid ${theme.palette.primary.main}`,
-  margin: '0 auto',
+const SelfieImage = styled(ImageContainer)(({ theme }) => ({
+  // Inherit all styles from ImageContainer
+}));
+
+const IDImage = styled(ImageContainer)(({ theme }) => ({
   marginBottom: theme.spacing(2),
+  // Inherit all styles from ImageContainer
 }));
 
 export default function ExtractionStep() {
@@ -262,20 +267,24 @@ export default function ExtractionStep() {
               sx={{ width: '100%', maxWidth: 1000, mx: 'auto' }}
             >
               {/* Images Section */}
-              <Stack spacing={3} alignItems="center" sx={{ minWidth: { md: 240 } }}>
+              <Stack spacing={3} alignItems="center" sx={{ minWidth: { md: 260 } }}>
                 <Typography variant="subtitle1" color="text.secondary" fontWeight={500}>
                   Verified Documents
                 </Typography>
                 
                 {/* ID Image */}
                 {state.didData.ipfsUrl && (
-                  <IDImage>
-                    <img 
-                      src={state.didData.ipfsUrl} 
-                      alt="ID Document"
-                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                    />
-                  </IDImage>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
+                      Identity Document
+                    </Typography>
+                    <IDImage>
+                      <img 
+                        src={state.didData.ipfsUrl} 
+                        alt="ID Document"
+                      />
+                    </IDImage>
+                  </Box>
                 )}
                 
                 {/* Selfie/Liveness Image */}
@@ -288,7 +297,6 @@ export default function ExtractionStep() {
                       <img 
                         src={state.didData.livenessImage} 
                         alt="Liveness Check"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     </SelfieImage>
                   </Box>
@@ -305,6 +313,12 @@ export default function ExtractionStep() {
               </Stack>
               
               {/* Info Section */}
+              <div style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }}  >
+
               <Box sx={{ flexGrow: 1 }}>
                 <InfoCard elevation={2} sx={{ p: 2 }}>
                   <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 1.5, fontSize: '1.1rem', fontWeight: 500 }}>
@@ -449,6 +463,7 @@ export default function ExtractionStep() {
                   )}
                 </InfoCard>
               </Box>
+              </div>
             </Stack>
           </Box>
         </Fade>
