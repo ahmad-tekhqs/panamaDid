@@ -66,11 +66,12 @@ export default function Footer() {
           Powered by:
           <LogoContainer>
             <Image
-              src="/ryt-logo-color.svg"
+              src="/newlogo.svg"
               alt="RYT Logo"
               fill
               style={{ objectFit: 'contain' }}
             />
+            
           </LogoContainer>
         </Typography>
       </FooterContent>

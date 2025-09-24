@@ -312,13 +312,17 @@ export default function ConnectWalletPage() {
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <LogoContainer>
-              <Image 
-                src="/ryt-logo-white.svg"
-                alt="RYT Logo"
-                fill
-                style={{ objectFit: 'contain' }}
-              />
+            <LogoContainer className="flex flex-col items-center justify-center">
+              
+              <div className="h-60 w-60 relative">
+            <Image 
+              src="/ryt-logo-color.svg"
+              alt="RYT Logo"
+              fill
+              style={{ objectFit: 'contain' }}
+            />
+          </div>
+            <p className="mt-2 text-[10.9px] italic font-roboto">Con paso firme</p>
             </LogoContainer>
             
             <Typography 
@@ -343,7 +347,7 @@ export default function ConnectWalletPage() {
               variant="h5"
               sx={{
                 color: 'rgba(44, 62, 80, 0.8)',
-                marginBottom: 6,
+                marginBottom: 1,
                 fontWeight: 400,
                 maxWidth: '650px',
                 mx: 'auto',

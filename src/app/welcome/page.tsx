@@ -181,21 +181,24 @@ export default function WelcomePage() {
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <LogoContainer>
-              <Image 
-                src="/ryt-logo-white.svg"
-                alt="RYT Logo"
-                fill
-                style={{ objectFit: 'contain' }}
-              />
+            <LogoContainer className="flex flex-col items-center justify-center">
+              
+              <div className="h-60 w-60 relative">
+            <Image 
+              src="/ryt-logo-color.svg"
+              alt="RYT Logo"
+              fill
+              style={{ objectFit: 'contain' }}
+            />
+          </div>
+            <p className="mt-2 text-[10.9px] italic font-roboto">Con paso firme</p>
             </LogoContainer>
-            
             <Typography 
               variant="h3" 
               component="h3"
               sx={{
                 fontWeight: 700,
-                marginBottom: 2,
+                marginBottom: 3,
                 animation: `${fadeIn} 1s ease-out`,
                 letterSpacing: '0.02em',
                 background: 'linear-gradient(90deg, #052457 0%, #052457 50%, #052457 100%)',
@@ -203,9 +206,9 @@ export default function WelcomePage() {
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
                 textShadow: 'none',
-                fontSize: { xs: '2rem', md: '3rem' },
+                fontSize: { xs: '1.8rem', md: '2rem' },
                 textAlign: 'center',
-                lineHeight: 0.9,
+               
               }}
             >
              Identidad Digital (DID) de Panamá
