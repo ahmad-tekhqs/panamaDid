@@ -9,76 +9,63 @@ import { IDInformation } from '@/types/id';
 import {
   Box,
   Typography,
-  Paper,
-  Stack,
-  Divider,
   LinearProgress,
-  Card,
-  CardContent,
-  Avatar,
   Fade,
-  Chip,
   useTheme,
   alpha,
   styled,
   Alert
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import {
-  Person as PersonIcon,
-  Event as EventIcon,
-  Badge as BadgeIcon,
-  Assignment as AssignmentIcon,
   CheckCircle as CheckCircleIcon
 } from '@mui/icons-material';
 
 // Styled components
-const InfoCard = styled(Paper)(({ theme }) => ({
-  borderRadius: theme.shape.borderRadius * 2,
-  overflow: 'hidden',
-  boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
-  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-  '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: '0 12px 20px rgba(0,0,0,0.15)',
-  },
-}));
 
-const InfoItem = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'flex-start',
-  marginBottom: theme.spacing(1),
-  padding: theme.spacing(0.75, 1),
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.primary.main, 0.03),
-  transition: 'background-color 0.2s ease',
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.primary.main, 0.06),
+const DataField = styled(Box)(({ theme }) => ({
+  display: 'grid',
+  gridTemplateColumns: '1fr 2fr',
+  gap: theme.spacing(2),
+  padding: theme.spacing(2.5, 4),
+  borderBottom: '1px solid #f1f5f9',
+  alignItems: 'center',
+  '&:last-child': {
+    borderBottom: 'none',
+  },
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: '1fr',
+    gap: theme.spacing(1),
+    padding: theme.spacing(2, 2),
   }
 }));
 
-const SelfieImage = styled(Box)(({ theme }) => ({
+const ImageContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
-  width: '100%',
-  maxWidth: 200,
+  width: 240,
   height: 200,
   borderRadius: theme.shape.borderRadius * 2,
   overflow: 'hidden',
   boxShadow: '0 10px 20px rgba(0,0,0,0.15)',
   border: `2px solid ${theme.palette.primary.main}`,
   margin: '0 auto',
+  backgroundColor: alpha(theme.palette.primary.light, 0.1),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  '& img': {
+    maxWidth: '100%',
+    maxHeight: '100%',
+    objectFit: 'contain',
+  }
 }));
 
-const IDImage = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  width: '100%',
-  height: 200,
-  borderRadius: theme.shape.borderRadius * 2,
-  overflow: 'hidden',
-  boxShadow: '0 10px 20px rgba(0,0,0,0.15)',
-  border: `2px solid ${theme.palette.primary.main}`,
-  margin: '0 auto',
+const SelfieImage = styled(ImageContainer)(({ theme }) => ({
+  // Inherit all styles from ImageContainer
+}));
+
+const IDImage = styled(ImageContainer)(({ theme }) => ({
   marginBottom: theme.spacing(2),
+  // Inherit all styles from ImageContainer
 }));
 
 export default function ExtractionStep() {
@@ -222,10 +209,6 @@ export default function ExtractionStep() {
     performExtraction();
   }, [updateDIDData, markStepAsCompleted]);
 
-  // Toggle between OpenAI and mock data (for testing purposes)
-  const toggleUseOpenAI = () => {
-    setUseOpenAI(!useOpenAI);
-  };
 
   const renderContent = () => {
     if (extractionPhase === 'preparing' || extractionPhase === 'extracting' || extractionPhase === 'processing') {
@@ -255,201 +238,389 @@ export default function ExtractionStep() {
     } else if (extractionPhase === 'complete') {
       return (
         <Fade in={extractionPhase === 'complete'} timeout={800}>
-          <Box>
-            <Stack 
-              direction={{ xs: 'column', md: 'row' }} 
-              spacing={4} 
-              sx={{ width: '100%', maxWidth: 1000, mx: 'auto' }}
-            >
-              {/* Images Section */}
-              <Stack spacing={3} alignItems="center" sx={{ minWidth: { md: 240 } }}>
-                <Typography variant="subtitle1" color="text.secondary" fontWeight={500}>
-                  Verified Documents
-                </Typography>
-                
-                {/* ID Image */}
-                {state.didData.ipfsUrl && (
-                  <IDImage>
-                    <img 
-                      src={state.didData.ipfsUrl} 
-                      alt="ID Document"
-                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                    />
-                  </IDImage>
-                )}
-                
-                {/* Selfie/Liveness Image */}
-                {state.didData.livenessImage && (
-                  <Box>
-                    <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                      Liveness Verification
-                    </Typography>
-                    <SelfieImage>
-                      <img 
-                        src={state.didData.livenessImage} 
-                        alt="Liveness Check"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    </SelfieImage>
-                  </Box>
-                )}
-                
-                {/* Demo toggle */}
-                <Chip 
-                  label={useOpenAI ? "Using Real API" : "Using Demo Mode"} 
-                  color={useOpenAI ? "primary" : "default"}
-                  variant="outlined"
-                  onClick={toggleUseOpenAI}
-                  sx={{ mt: 2 }}
-                />
-              </Stack>
+          <Box sx={{ maxWidth: 1400, mx: 'auto', px: 2 }}>
+            {/* Main Grid Layout */}
+            <Box sx={{ 
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '400px 1fr' },
+              gap: { xs: 3, md: 5 },
+              alignItems: 'start',
+            }}>
               
-              {/* Info Section */}
-              <Box sx={{ flexGrow: 1 }}>
-                <InfoCard elevation={2} sx={{ p: 2 }}>
-                  <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 1.5, fontSize: '1.1rem', fontWeight: 500 }}>
-                    Extracted Information
+              {/* Left Panel - Document Images */}
+              <Box sx={{ 
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 3,
+              }}>
+                {/* Header */}
+                {/* <Box sx={{ 
+                  textAlign: 'center',
+                  py: 2,
+                  background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                  borderRadius: 2,
+                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                }}>
+                  <Typography variant="h6" sx={{ 
+                    fontWeight: 700,
+                    color: '#1e293b',
+                    mb: 0.5,
+                    fontSize: '1.1rem',
+                  }}>
+                    Verification Assets
                   </Typography>
-                  
-                  <Stack spacing={1}>
-                    {extractedData && (
-                      <>
-                        <InfoItem>
-                          <PersonIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
-                          <Box>
-                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                              Full Name
-                            </Typography>
-                            <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                              {extractedData?.fullName || 'Not available'}
-                            </Typography>
-                          </Box>
-                        </InfoItem>
-                        
-                        <InfoItem>
-                          <EventIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
-                          <Box>
-                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                              Date of Birth
-                            </Typography>
-                            <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                              {extractedData?.dateOfBirth || 'Not available'}
-                            </Typography>
-                          </Box>
-                        </InfoItem>
-                        
-                        <InfoItem>
-                          <BadgeIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
-                          <Box>
-                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                              ID Number
-                            </Typography>
-                            <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                              {extractedData?.idNumber || 'Not available'}
-                            </Typography>
-                          </Box>
-                        </InfoItem>
-                        
-                        {/* Metadata fields */}
-                        {extractedData?.metadata && (
-                          <InfoItem>
-                            <AssignmentIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
-                            <Box>
-                              <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                                Document Details
-                              </Typography>
-                              {extractedData.metadata.documentType && (
-                                <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                                  Type: {extractedData.metadata.documentType}
+                  <Typography variant="body2" sx={{ 
+                    color: '#64748b',
+                    fontSize: '0.875rem',
+                  }}>
+                    Identity documents & biometric data
+                  </Typography>
+                </Box> */}
+
+                {/* Document Images Grid */}
+                <Box sx={{ 
+                  display: 'grid',
+                  gridTemplateColumns: '1fr',
+                  gap: 2.5,
+                }}>
+                  {/* ID Document */}
+                  {state.didData.ipfsUrl && (
+                    <Box sx={{ 
+                      background: '#ffffff',
+                      borderRadius: 3,
+                      p: 2,
+                      border: '1px solid #e2e8f0',
+                      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                        transform: 'translateY(-1px)',
+                      }
+                    }}>
+                      <Typography variant="subtitle2" sx={{ 
+                        color: '#374151',
+                        mb: 1.5,
+                        fontWeight: 600,
+                        fontSize: '0.875rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                      }}>
+                        Government ID
+                      </Typography>
+                      <IDImage>
+                        <img 
+                          src={state.didData.ipfsUrl} 
+                          alt="ID Document"
+                        />
+                      </IDImage>
+                    </Box>
+                  )}
+
+                  {/* Liveness Verification */}
+                  {state.didData.livenessImage && (
+                    <Box sx={{ 
+                      background: '#ffffff',
+                      borderRadius: 3,
+                      p: 2,
+                      border: '1px solid #e2e8f0',
+                      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                        transform: 'translateY(-1px)',
+                      }
+                    }}>
+                      <Typography variant="subtitle2" sx={{ 
+                        color: '#374151',
+                        mb: 1.5,
+                        fontWeight: 600,
+                        fontSize: '0.875rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                      }}>
+                        Biometric Verification
+                      </Typography>
+                      <SelfieImage>
+                        <img 
+                          src={state.didData.livenessImage} 
+                          alt="Liveness Check"
+                        />
+                      </SelfieImage>
+                    </Box>
+                  )}
+                </Box>
+              </Box>
+
+              {/* Right Panel - Extracted Information */}
+              <Box sx={{ 
+                background: '#ffffff',
+                borderRadius: 3,
+                boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                border: '1px solid #e2e8f0',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+              }}>
+                
+                {/* Header */}
+                <Box sx={{ 
+                  background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                  px: 4,
+                  py: 3,
+                  color: 'white',
+                  width: '100%',
+                }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <CheckCircleIcon sx={{ 
+                      fontSize: '1.5rem',
+                      color: '#10b981',
+                    }} />
+                    <Box>
+                      <Typography variant="h5" sx={{ 
+                        fontWeight: 700,
+                        fontSize: '1.4rem',
+                        mb: 0.5,
+                        letterSpacing: '-0.025em',
+                      }}>
+                        Identity Data
+                      </Typography>
+                      <Typography variant="body2" sx={{ 
+                        color: '#94a3b8',
+                        fontSize: '0.875rem',
+                      }}>
+                        Extracted from official documents
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+
+                {/* Content */}
+                <Box sx={{ 
+                  p: 0,
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}>
+                  {extractedData && (
+                    <Box sx={{ width: '100%' }}>
+                      {/* Personal Information */}
+                      <DataField>
+                        <Box>
+                          <Typography variant="body2" sx={{ 
+                            color: '#6b7280',
+                            fontSize: '0.875rem',
+                            fontWeight: 500,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                          }}>
+                            Full Name
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="h6" sx={{ 
+                            color: '#111827',
+                            fontSize: '1.125rem',
+                            fontWeight: 600,
+                            lineHeight: 1.2,
+                          }}>
+                            {extractedData?.fullName || 'Not available'}
+                          </Typography>
+                        </Box>
+                      </DataField>
+
+                      <DataField>
+                        <Box>
+                          <Typography variant="body2" sx={{ 
+                            color: '#6b7280',
+                            fontSize: '0.875rem',
+                            fontWeight: 500,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                          }}>
+                            Date of Birth
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="h6" sx={{ 
+                            color: '#111827',
+                            fontSize: '1.125rem',
+                            fontWeight: 600,
+                            lineHeight: 1.2,
+                          }}>
+                            {extractedData?.dateOfBirth || 'Not available'}
+                          </Typography>
+                        </Box>
+                      </DataField>
+
+                      <DataField>
+                        <Box>
+                          <Typography variant="body2" sx={{ 
+                            color: '#6b7280',
+                            fontSize: '0.875rem',
+                            fontWeight: 500,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                          }}>
+                            ID Number
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="h6" sx={{ 
+                            color: '#111827',
+                            fontSize: '1.125rem',
+                            fontWeight: 600,
+                            lineHeight: 1.2,
+                            fontFamily: 'monospace',
+                          }}>
+                            {extractedData?.idNumber || 'Not available'}
+                          </Typography>
+                        </Box>
+                      </DataField>
+
+                      {/* Document Information */}
+                      {extractedData?.metadata && (
+                        <>
+                          {extractedData.metadata.documentType && (
+                            <DataField>
+                              <Box>
+                                <Typography variant="body2" sx={{ 
+                                  color: '#6b7280',
+                                  fontSize: '0.875rem',
+                                  fontWeight: 500,
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.05em',
+                                }}>
+                                  Document Type
                                 </Typography>
-                              )}
-                              {extractedData.metadata.issuingCountry && (
-                                <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                                  Country: {extractedData.metadata.issuingCountry}
+                              </Box>
+                              <Box>
+                                <Typography variant="h6" sx={{ 
+                                  color: '#111827',
+                                  fontSize: '1.125rem',
+                                  fontWeight: 600,
+                                  lineHeight: 1.2,
+                                }}>
+                                  {extractedData.metadata.documentType}
                                 </Typography>
-                              )}
-                            </Box>
-                          </InfoItem>
-                        )}
-                      </>
-                    )}
-                  </Stack>
+                              </Box>
+                            </DataField>
+                          )}
+
+                          {extractedData.metadata.issuingCountry && (
+                            <DataField>
+                              <Box>
+                                <Typography variant="body2" sx={{ 
+                                  color: '#6b7280',
+                                  fontSize: '0.875rem',
+                                  fontWeight: 500,
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.05em',
+                                }}>
+                                  Issuing Country
+                                </Typography>
+                              </Box>
+                              <Box>
+                                <Typography variant="h6" sx={{ 
+                                  color: '#111827',
+                                  fontSize: '1.125rem',
+                                  fontWeight: 600,
+                                  lineHeight: 1.2,
+                                }}>
+                                  {extractedData.metadata.issuingCountry}
+                                </Typography>
+                              </Box>
+                            </DataField>
+                          )}
+                        </>
+                      )}
+                    </Box>
+                  )}
                   
-                  {/* Confidence score with visual indicator */}
-                  {extractedData && extractedData.confidence && (
-                    <Box sx={{ mt: 2 }}>
-                      <Typography variant="caption" color="text.secondary" gutterBottom sx={{ fontSize: '0.75rem' }}>
+                </Box>
+
+                {/* Footer - Confidence Score */}
+                {extractedData && extractedData.confidence && (
+                  <Box sx={{ 
+                    background: '#f8fafc',
+                    px: 4,
+                    py: 3,
+                    borderTop: '1px solid #e2e8f0',
+                    width: '100%',
+                  }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                      <Typography variant="subtitle2" sx={{ 
+                        color: '#374151',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                      }}>
                         Extraction Confidence
                       </Typography>
-                      <LinearProgress
-                        variant="determinate"
-                        value={extractedData.confidence * 100}
-                        sx={{
-                          height: 6,
-                          borderRadius: 3,
-                          mb: 0.5,
-                          backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                          '& .MuiLinearProgress-bar': {
-                            borderRadius: 3,
-                            backgroundColor: extractedData.confidence > 0.8 
-                              ? 'success.main' 
-                              : extractedData.confidence > 0.6 
-                              ? 'warning.main' 
-                              : 'error.main',
-                          }
-                        }}
-                      />
-                      <Typography variant="caption" color="text.secondary" align="right" sx={{ display: 'block', fontSize: '0.7rem' }}>
-                        {Math.round(extractedData.confidence * 100)}% confidence
-                      </Typography>
-                    </Box>
-                  )}
-                  
-                  {/* Raw extraction text (collapsible) */}
-                  {rawText && (
-                    <Box 
-                      component="details" 
-                      sx={{ 
-                        mt: 2, 
-                        p: 1.5, 
-                        bgcolor: 'background.paper', 
-                        borderRadius: 1,
-                        border: '1px solid',
-                        borderColor: 'divider'
-                      }}
-                    >
-                      <Box component="summary" sx={{ cursor: 'pointer', color: 'primary.main', mb: 0.5, fontSize: '0.8rem' }}>
-                        Show raw extraction data
-                      </Box>
-                      <Box 
-                        component="pre" 
-                        sx={{ 
-                          mt: 0.5, 
-                          p: 1.5, 
-                          bgcolor: alpha(theme.palette.primary.main, 0.05), 
-                          borderRadius: 1,
-                          fontSize: '0.7rem',
-                          overflow: 'auto',
-                          maxHeight: 150
-                        }}
-                      >
-                        {rawText}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="h6" sx={{ 
+                          color: extractedData.confidence > 0.8 ? '#059669' : extractedData.confidence > 0.6 ? '#d97706' : '#dc2626',
+                          fontSize: '1.25rem',
+                          fontWeight: 700,
+                        }}>
+                          {Math.round(extractedData.confidence * 100)}%
+                        </Typography>
+                        <Typography variant="body2" sx={{ 
+                          color: '#6b7280',
+                          fontSize: '0.75rem',
+                          fontWeight: 500,
+                        }}>
+                          {extractedData.confidence > 0.8 ? 'HIGH' : extractedData.confidence > 0.6 ? 'MEDIUM' : 'LOW'}
+                        </Typography>
                       </Box>
                     </Box>
-                  )}
-                  
-                  {error && (
+                    <Box sx={{ 
+                      height: 6,
+                      borderRadius: 3,
+                      background: '#e5e7eb',
+                      overflow: 'hidden',
+                    }}>
+                      <Box sx={{ 
+                        height: '100%',
+                        width: `${extractedData.confidence * 100}%`,
+                        background: extractedData.confidence > 0.8 
+                          ? 'linear-gradient(90deg, #059669, #10b981)'
+                          : extractedData.confidence > 0.6 
+                          ? 'linear-gradient(90deg, #d97706, #f59e0b)'
+                          : 'linear-gradient(90deg, #dc2626, #ef4444)',
+                        borderRadius: 3,
+                        transition: 'width 0.5s ease',
+                      }} />
+                    </Box>
+                  </Box>
+                )}
+
+                {error && (
+                  <Box sx={{ 
+                    px: 4, 
+                    py: 3, 
+                    background: '#fef2f2', 
+                    borderTop: '1px solid #fecaca',
+                    width: '100%',
+                  }}>
                     <Alert 
                       severity="error" 
                       variant="outlined"
-                      sx={{ mt: 2, fontSize: '0.875rem' }}
+                      sx={{ 
+                        fontSize: '0.875rem',
+                        background: 'transparent',
+                        border: 'none',
+                      }}
                     >
                       {error}
                     </Alert>
-                  )}
-                </InfoCard>
+                  </Box>
+                )}
               </Box>
-            </Stack>
+            </Box>
           </Box>
         </Fade>
       );
