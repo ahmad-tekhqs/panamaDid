@@ -342,7 +342,7 @@ export default function LivenessVerificationStep() {
     
     if (faceFound && autoCapture && !captureInProgress.current && countdown === null) {
       // Start countdown for auto-capture
-      setCountdown(0);
+      setCountdown(1);
       captureInProgress.current = true;
       
       const countdownInterval = setInterval(() => {

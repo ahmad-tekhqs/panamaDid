@@ -11,7 +11,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "DID Creation App",
+  title: "DID de Panamá",
   description: "Create and manage Decentralized Identifiers",
 };
 

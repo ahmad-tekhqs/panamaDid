@@ -53,8 +53,8 @@ const CONTRACT_ABI = [
   }
 ];
 
-// Placeholder Token URI - will be replaced with actual metadata
-const TOKEN_URI = "https://green-manual-tapir-637.mypinata.cloud/ipfs/bafkreiaapyrob3rqaxquyfd7lh4wclbtm5ooynxms5y23izagctpboe2zq";
+// Fallback Token URI - used if no tokenURI is available in state
+const FALLBACK_TOKEN_URI = "https://green-manual-tapir-637.mypinata.cloud/ipfs/bafkreiaapyrob3rqaxquyfd7lh4wclbtm5ooynxms5y23izagctpboe2zq";
 
 // Define keyframes for animations
 const pulse = keyframes`
@@ -263,8 +263,9 @@ export default function MintingStep() {
             console.error("Error getting image URLs:", error);
           }
           
-          // Create metadata for the DID token - in this case we're using a placeholder URI
-          const actualTokenURI = TOKEN_URI;
+          // Use the tokenURI from state (generated in VerificationStep) or fallback
+          const actualTokenURI = state.didData.tokenURI || FALLBACK_TOKEN_URI;
+          console.log('Using Token URI for minting:', actualTokenURI);
           
           setMintStatus("Minting in progress...");
           
@@ -317,7 +318,7 @@ export default function MintingStep() {
             
             setMintStatus("Transaction submitted and confirmed!");
             setTxHash(hash);
-            
+            debugger;
             // Generate a token ID - in a real app, this would come from the contract event logs
             const mockTokenId = Math.floor(Math.random() * 1000).toString();
             setTokenId(mockTokenId);

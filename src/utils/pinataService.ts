@@ -39,7 +39,7 @@ const uploadToPinata = async (file: File): Promise<PinataResponse> => {
       console.warn('Pinata API credentials not set. Using demo mode.');
       
       // Simulate upload in demo mode
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await new Promise(resolve => setTimeout(resolve, 1500));
       
       return {
         success: true,
