@@ -150,6 +150,7 @@ export default function DIDProfileView() {
   const [copied, setCopied] = useState(false);
   
   const handleCopyDID = () => {
+    debugger
     const didString = `did:ryt:${state.didData.didIdentifier || state.didData.walletAddress || "0x0"}`;
     navigator.clipboard.writeText(didString);
     setCopied(true);
@@ -577,7 +578,7 @@ export default function DIDProfileView() {
                         Token ID
                       </Typography>
                       <Typography variant="body2">
-                        {state.didData.tokenId || '49'}
+                        {state.didData.didIdentifier || '49'}
                       </Typography>
                     </Box>
                   </Stack>

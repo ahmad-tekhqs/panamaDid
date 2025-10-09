@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useDIDContext } from '../../context/DIDContext';
 import { IDInformation } from '@/types/id';
 import { CreationStep } from '@/types/did';
+import { createAndUploadDIDMetadata } from '../../utils/metadataService';
 import { 
   Box, 
   Typography, 
@@ -123,6 +124,7 @@ export default function VerificationStep() {
       try {
         // Load document details
         if (state.didData.documentDetails) {
+          
           setVerifiedData(state.didData.documentDetails as IDInformation);
         } else if (state.skippedIDVerification && state.didData.demoData) {
           // If ID verification was skipped, use demo data
@@ -157,6 +159,17 @@ export default function VerificationStep() {
           if (progress >= 100) clearInterval(verifyingInterval);
         }, 50);
         
+        // Create and upload DID metadata to IPFS
+        let tokenURI = '';
+        try {
+          console.log('Creating and uploading DID metadata...');
+          tokenURI = await createAndUploadDIDMetadata(state.didData, isDemoMode);
+          console.log('Token URI created:', tokenURI);
+        } catch (error) {
+          console.error('Error creating metadata:', error);
+          // Continue with verification even if metadata upload fails
+        }
+        
         await new Promise(resolve => setTimeout(resolve, verifyingDuration));
         
         if (!mounted) return;
@@ -187,7 +200,8 @@ export default function VerificationStep() {
           documentNumber: dataToVerify.idNumber,
           documentType: dataToVerify.metadata?.documentType,
           verifiedDetails: dataToVerify,
-          verificationTimestamp: new Date().toISOString()
+          verificationTimestamp: new Date().toISOString(),
+          tokenURI: tokenURI || undefined // Store the IPFS metadata URL
         });
         
         // Mark as completed to enable the Next button
