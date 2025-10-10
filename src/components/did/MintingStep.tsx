@@ -735,7 +735,8 @@ export default function MintingStep() {
           try {
             // For demo purposes, we'll provide an option to skip actual blockchain interaction
             const demoMode = false; // Set to true to use demo mode, false to attempt real minting
-            
+            // Extract token ID from the Mint event
+            let mintedTokenId: string | null = null;
             let hash;
             if (demoMode) {
               setMintStatus("Demo mode: Simulating blockchain transaction...");
@@ -768,14 +769,13 @@ export default function MintingStep() {
 
                 console.log("Transaction submitted:", tx);
                 hash = tx.hash;
-                
+                debugger
                 // Wait for transaction to be mined
                 setMintStatus("Waiting for transaction confirmation...");
                 const receipt = await tx.wait();
                 console.log("Transaction receipt:", receipt);
                 
-                // Extract token ID from the Mint event
-                let mintedTokenId: string | null = null;
+                
                 
                 // Find the Mint event in the logs
                 const mintEvent = receipt.events?.find((event: any) => event.event === 'Mint');
@@ -802,7 +802,10 @@ export default function MintingStep() {
                 }
                 
                 if (mintedTokenId) {
-                  setTokenId(mintedTokenId);
+                  
+
+                    setTokenId(mintedTokenId);
+                  
                 }
                
               } catch (contractError: any) {
@@ -816,9 +819,9 @@ export default function MintingStep() {
             
             setMintStatus("Transaction submitted and confirmed!");
             setTxHash(hash);
-            
+            setTokenId(mintedTokenId);
             // Use the actual minted token ID from the event
-            const finalTokenId = tokenId; // tokenId is already set from the event extraction above
+            const finalTokenId = mintedTokenId;
             
             // Update the DID context with the token ID
             updateDIDData({
