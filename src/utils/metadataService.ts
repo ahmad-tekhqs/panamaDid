@@ -19,6 +19,7 @@ interface DIDData {
   issuingCountry?: string;
   verificationTimestamp?: string;
   ipfsUrl?: string;
+  livenessImage?: string;
   didVerificationScore?: number;
   demoData?: {
     firstName: string;
@@ -65,8 +66,10 @@ export const generateDIDMetadata = (didData: DIDData, isDemoMode: boolean = fals
   // Generate a unique token number
   const tokenNumber = Math.floor(Math.random() * 1000) + 1;
   
-  // Use the uploaded ID image or a placeholder
-  const imageUrl = didData.ipfsUrl || 
+  // Prefer liveness image (selfie) over document image for DID profile
+  // Use the uploaded liveness image, then ID image, or a placeholder
+  const imageUrl = didData.livenessImage || 
+    didData.ipfsUrl || 
     "https://green-manual-tapir-637.mypinata.cloud/ipfs/bafybeiamhz7xwe7kjvurvtc7d4t3pscyttowfqkkcjrdfsulcn56bdrgke/image.png";
 
   return {
@@ -109,6 +112,18 @@ export const generateDIDMetadata = (didData: DIDData, isDemoMode: boolean = fals
       {
         trait_type: "verification_type",
         value: isDemoMode ? "Demo Mode" : "Full Verification"
+      },
+      {
+        trait_type: "liveness_verified",
+        value: didData.livenessImage ? "Yes" : "No"
+      },
+      {
+        trait_type: "document_image_url",
+        value: didData.ipfsUrl || "Not Available"
+      },
+      {
+        trait_type: "liveness_image_url", 
+        value: didData.livenessImage || "Not Available"
       }
     ]
   };

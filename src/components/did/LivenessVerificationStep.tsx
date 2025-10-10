@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useDIDContext } from '../../context/DIDContext';
+import { uploadImageToPinata } from '../../utils/pinata';
 
 // Face Detection API types
 interface FaceDetectorOptions {
@@ -342,7 +343,7 @@ export default function LivenessVerificationStep() {
     
     if (faceFound && autoCapture && !captureInProgress.current && countdown === null) {
       // Start countdown for auto-capture
-      setCountdown(1);
+      setCountdown(2);
       captureInProgress.current = true;
       
       const countdownInterval = setInterval(() => {
@@ -392,16 +393,38 @@ export default function LivenessVerificationStep() {
     setCountdown(null);
   };
 
-  const handleCapture = (imageSrc: string) => {
+  const handleCapture = async (imageSrc: string) => {
     setCapturedImage(imageSrc);
     setShowCamera(false);
+    setIsUploading(true);
     
-    // Store the image in the DID context
-    updateDIDData({
-      livenessImage: imageSrc,
-      livenessVerified: true,
-      livenessTimestamp: new Date().toISOString()
-    });
+    try {
+      // Convert image data URL to File object
+      const response = await fetch(imageSrc);
+      const blob = await response.blob();
+      const file = new File([blob], 'liveness-selfie.jpg', { type: 'image/jpeg' });
+      
+      // Upload to IPFS
+      const ipfsUrl = await uploadImageToPinata(file);
+      console.log('Liveness image uploaded to IPFS:', ipfsUrl);
+      
+      // Store the IPFS URL in the DID context
+      updateDIDData({
+        livenessImage: ipfsUrl, // Store IPFS URL instead of raw image data
+        livenessVerified: true,
+        livenessTimestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Error uploading liveness image to IPFS:', error);
+      // Fallback: store the raw image data if IPFS upload fails
+      updateDIDData({
+        livenessImage: imageSrc,
+        livenessVerified: true,
+        livenessTimestamp: new Date().toISOString()
+      });
+    } finally {
+      setIsUploading(false);
+    }
     
     // Simulate uploading and verification
     simulateVerification();
