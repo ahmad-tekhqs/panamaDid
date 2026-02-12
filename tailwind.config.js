@@ -13,6 +13,10 @@ module.exports = {
       },
       colors: {
         'didPurple': '#005EB8',
+        'amp-navy': '#052457',
+        'amp-blue': '#005EB8',
+        'panama-red': '#D8131B',
+        'amp-light': '#F0F4FA',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
