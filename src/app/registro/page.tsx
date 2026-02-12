@@ -174,7 +174,8 @@ export default function RegistroPage() {
           </motion.div>
 
           {/* Stepper */}
-          <Stepper currentStep={currentStep} />
+          {/* <Stepper currentStep={currentStep} /> */}
+          {/*Commented out for now not required for this page}
 
           {/* Form Card */}
           <motion.div
