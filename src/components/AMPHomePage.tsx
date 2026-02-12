@@ -161,7 +161,7 @@ function Header() {
           <div className="flex items-center gap-3">
             {/* DID Button */}
             <button
-              onClick={() => router.push('/connect-wallet')}
+              onClick={() => router.push('/gente-de-mar')}
               className="hidden sm:flex items-center gap-2 bg-[#D8131B] hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -249,7 +249,7 @@ function Header() {
                     Líneas de Emergencia
                   </a>
                   <button
-                    onClick={() => { setIsMenuOpen(false); router.push('/connect-wallet'); }}
+                    onClick={() => { setIsMenuOpen(false); router.push('/gente-de-mar'); }}
                     className="block mt-4 bg-[#D8131B] text-white px-4 py-2 rounded text-sm font-bold hover:bg-red-700 transition-colors"
                   >
                     Identidad Digital (DID)
@@ -382,7 +382,7 @@ function HeroSlider() {
 
       {/* DID Registration Button - Floating */}
       <button
-        onClick={() => router.push('/connect-wallet')}
+        onClick={() => router.push('/gente-de-mar')}
         className="absolute bottom-28 sm:bottom-32 right-4 sm:right-8 z-30 bg-[#D8131B] hover:bg-red-800 text-white px-4 sm:px-5 py-3 rounded-lg shadow-xl hover:shadow-2xl transition-all flex items-center gap-3 group"
       >
         <div className="w-9 h-9 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center">
@@ -940,7 +940,7 @@ function BlockchainDIDSection() {
         {/* CTA */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <button
-            onClick={() => router.push('/connect-wallet')}
+            onClick={() => router.push('/gente-de-mar')}
             className="bg-[#D8131B] hover:bg-red-700 text-white px-7 py-3 rounded-lg font-bold text-sm transition-colors flex items-center gap-2 shadow-lg"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
