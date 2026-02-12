@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useDIDContext } from '../../context/DIDContext';
 import { 
   Box, 
@@ -14,7 +14,6 @@ import {
   Button,
   Card,
   CardContent,
-  LinearProgress,
   Tooltip,
   IconButton,
   useTheme,
@@ -22,7 +21,6 @@ import {
   styled,
   Tab,
   Tabs,
-  Alert
 } from '@mui/material';
 import { 
   VerifiedUser as VerifiedUserIcon,
@@ -35,10 +33,59 @@ import {
   Image as ImageIcon,
   Person as PersonIcon,
   Assignment as AssignmentIcon,
-  Security as SecurityIcon
+  Security as SecurityIcon,
+  Anchor as AnchorIcon,
+  Email as EmailIcon,
+  Phone as PhoneIcon,
+  Public as PublicIcon,
+  Work as WorkIcon,
+  Home as HomeIcon,
+  Badge as BadgeIcon,
+  CalendarMonth as CalendarIcon,
 } from '@mui/icons-material';
 
-// Styled components for the profile
+// ============================================================================
+// HELPERS (moved from FinalizationStep)
+// ============================================================================
+
+interface UserInfo {
+  fullName?: string;
+  idNumber?: string;
+  nationality?: string;
+  dateOfBirth?: string;
+  email?: string;
+  capacityRequest?: string;
+  phoneNumber?: string;
+  address?: string;
+}
+
+function buildCredentialId(didData: Record<string, any>): string {
+  const walletShort = (didData.walletAddress || '0x0000').slice(-6).toUpperCase();
+  const tokenId = didData.didIdentifier || '00';
+  return `DPP-${walletShort}-${tokenId}`;
+}
+
+function getApplicationType(didData: Record<string, any>): string {
+  let formType = didData.registroFormType || 'F-76';
+  let appType = didData.registroApplicationType || '';
+  if (typeof window !== 'undefined') {
+    formType = formType || localStorage.getItem('registroFormType') || 'F-76';
+    appType = appType || localStorage.getItem('registroApplicationType') || '';
+  }
+  const labels: Record<string, string> = {
+    titulo: 'Título de Competencia',
+    refrendo: 'Refrendo',
+    certificado: 'Certificado de Suficiencia',
+    duplicado: 'Duplicado',
+  };
+  const appLabel = labels[appType] || 'Technical Documentation';
+  return `${formType} — ${appLabel}`;
+}
+
+// ============================================================================
+// STYLED COMPONENTS
+// ============================================================================
+
 const ProfileSection = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
   borderRadius: theme.shape.borderRadius * 2,
@@ -78,18 +125,9 @@ const GlowingBadge = styled(Box)(({ theme }) => ({
     animation: 'pulse 2s infinite',
   },
   '@keyframes pulse': {
-    '0%': {
-      transform: 'scale(0.95)',
-      opacity: 0.7,
-    },
-    '70%': {
-      transform: 'scale(1)',
-      opacity: 0.3,
-    },
-    '100%': {
-      transform: 'scale(0.95)',
-      opacity: 0.7,
-    },
+    '0%': { transform: 'scale(0.95)', opacity: 0.7 },
+    '70%': { transform: 'scale(1)', opacity: 0.3 },
+    '100%': { transform: 'scale(0.95)', opacity: 0.7 },
   }
 }));
 
@@ -108,7 +146,6 @@ const DataField = styled(Box)(({ theme }) => ({
 
 const ImagePreview = styled(Box)(({ theme }) => ({
   width: '100%',
-  height: 250,
   borderRadius: theme.shape.borderRadius * 2,
   overflow: 'hidden',
   boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
@@ -121,14 +158,14 @@ const ImagePreview = styled(Box)(({ theme }) => ({
     transition: 'transform 0.3s ease',
   },
   '&:hover img': {
-    transform: 'scale(1.05)',
+    transform: 'scale(1.02)',
   },
   '&:hover .overlay': {
     opacity: 1,
   }
 }));
 
-const ImageOverlay = styled(Box)(({ theme }) => ({
+const ImageOverlay = styled(Box)(() => ({
   position: 'absolute',
   top: 0,
   left: 0,
@@ -143,459 +180,484 @@ const ImageOverlay = styled(Box)(({ theme }) => ({
   zIndex: 2,
 }));
 
+const CredentialBadge = styled(Chip)(({ theme }) => ({
+  fontWeight: 600,
+  fontSize: '0.7rem',
+  height: 26,
+  borderRadius: 13,
+}));
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
 export default function DIDProfileView() {
   const { state } = useDIDContext();
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState(0);
   const [copied, setCopied] = useState(false);
-  
+
+  const didData = state.didData;
+  const userInfo = (didData.userInfo || {}) as UserInfo;
+  const credentialId = buildCredentialId(didData);
+  const appType = getApplicationType(didData);
+  const generatedPassImage = didData.generatedPassImage as string | undefined;
+
   const handleCopyDID = () => {
-    debugger
-    const didString = `did:ryt:${state.didData.didIdentifier || state.didData.walletAddress || "0x0"}`;
+    const didString = `did:ryt:${didData.didIdentifier || didData.walletAddress || '0x0'}`;
     navigator.clipboard.writeText(didString);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-  
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
-  // Format timestamp to readable date
-  const formatTimestamp = (timestamp: number) => {
+  const formatTimestamp = (timestamp: number | string) => {
     if (!timestamp) return 'Not available';
     return new Date(timestamp).toLocaleString();
   };
-  
+
+  const mintTimestamp = didData.completionTimestamp
+    ? new Date(didData.completionTimestamp).toLocaleString()
+    : didData.mintingTimestamp
+    ? formatTimestamp(didData.mintingTimestamp)
+    : new Date().toLocaleString();
+
   return (
     <Container maxWidth="lg" sx={{ py: 1 }}>
-      <Typography 
-        variant="h5" 
-        component="h2" 
-        gutterBottom 
-        sx={{ 
-          textAlign: 'center', 
-          fontWeight: 600,
-          background: theme.palette.primary.main,
+      {/* Page Title */}
+      <Typography
+        variant="h5"
+        component="h2"
+        gutterBottom
+        sx={{
+          textAlign: 'center',
+          fontWeight: 700,
+          background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
-          mb: 4
+          mb: 1,
         }}
       >
-        Your Verified DID Profile
+        Digital Port Pass — Pase Portuario Digital
       </Typography>
-      
-      {/* DID Identifier Card */}
+      <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', mb: 4 }}>
+        Your seafarer credential has been minted and secured on the blockchain.
+      </Typography>
+
+      {/* ================================================================ */}
+      {/* GENERATED PASSPORT IMAGE (Hero) */}
+      {/* ================================================================ */}
+      {generatedPassImage && (
+        <ProfileSection sx={{ mb: 4, p: 0, overflow: 'hidden' }}>
+          <ImagePreview sx={{ border: 'none', boxShadow: 'none', borderRadius: 0 }}>
+            <img src={generatedPassImage} alt="Digital Port Pass Credential" style={{ height: 'auto' }} />
+          </ImagePreview>
+        </ProfileSection>
+      )}
+
+      {/* ================================================================ */}
+      {/* HEADER CARD: Identity + Status */}
+      {/* ================================================================ */}
       <ProfileSection sx={{ mb: 4 }}>
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="center">
           <GlowingBadge>
-            <Avatar 
-              sx={{ 
-                width: 80, 
+            <Avatar
+              sx={{
+                width: 80,
                 height: 80,
                 bgcolor: theme.palette.primary.main,
-                boxShadow: `0 0 15px ${alpha(theme.palette.primary.main, 0.5)}`
+                boxShadow: `0 0 15px ${alpha(theme.palette.primary.main, 0.5)}`,
               }}
             >
-              <SecurityIcon sx={{ fontSize: 40 }} />
+              <AnchorIcon sx={{ fontSize: 40 }} />
             </Avatar>
           </GlowingBadge>
-          
+
           <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="overline" color="text.secondary">Decentralized Identifier</Typography>
-            <Typography variant="h5" fontWeight="bold" color="primary.main" gutterBottom>
-              {state.didData.fullName || 'Anonymous User'}
+            <Typography variant="overline" color="text.secondary">
+              Pase Portuario Digital (DPP)
             </Typography>
-            
-            <Box sx={{ 
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              p: 2,
-              mt: 1, 
-              bgcolor: alpha(theme.palette.primary.main, 0.05),
-              borderRadius: 2,
-              fontFamily: 'monospace',
-              fontSize: 'body1.fontSize',
-              wordBreak: 'break-all'
-            }}>
+            <Typography variant="h5" fontWeight="bold" color="primary.main" gutterBottom>
+              {userInfo.fullName || didData.fullName || 'Seafarer'}
+            </Typography>
+
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                p: 2,
+                mt: 1,
+                bgcolor: alpha(theme.palette.primary.main, 0.05),
+                borderRadius: 2,
+                fontFamily: 'monospace',
+                fontSize: 'body1.fontSize',
+                wordBreak: 'break-all',
+              }}
+            >
               <Typography component="span" sx={{ fontWeight: 500 }}>
-                did:ryt:{state.didData.didIdentifier || state.didData.walletAddress || "0x0"}
+                did:ryt:{didData.didIdentifier || didData.walletAddress || '0x0'}
               </Typography>
-              <Tooltip title={copied ? "Copied!" : "Copy to clipboard"}>
+              <Tooltip title={copied ? 'Copied!' : 'Copy to clipboard'}>
                 <IconButton onClick={handleCopyDID} size="small">
-                  {copied ? <CheckIcon fontSize="small" color="success" /> : <ContentCopyIcon fontSize="small" />}
+                  {copied ? (
+                    <CheckIcon fontSize="small" color="success" />
+                  ) : (
+                    <ContentCopyIcon fontSize="small" />
+                  )}
                 </IconButton>
               </Tooltip>
             </Box>
           </Box>
-          
+
           <Stack direction="column" spacing={1} alignItems="center">
-            <Chip 
-              icon={<VerifiedUserIcon />} 
-              label="Verified on Blockchain" 
-              color="primary" 
-              sx={{ fontWeight: 500, px: 1 }}
+            <Chip
+              icon={<VerifiedUserIcon />}
+              label="Minted & Verified"
+              color="primary"
+              sx={{ fontWeight: 600, px: 1 }}
             />
             <Typography variant="caption" color="text.secondary">
-              {state.didData.txTimestamp ? formatTimestamp(state.didData.txTimestamp) : 'Verification time not available'}
+              {mintTimestamp}
             </Typography>
+            <Stack direction="row" spacing={0.5} sx={{ mt: 0.5 }}>
+              <CredentialBadge label={credentialId} variant="outlined" color="primary" size="small" />
+              <CredentialBadge label="v.03" variant="outlined" size="small" />
+            </Stack>
           </Stack>
         </Stack>
+
+        {/* Trust anchors row */}
+        <Stack direction="row" spacing={1} justifyContent="center" flexWrap="wrap" sx={{ mt: 2.5, pt: 2, borderTop: `1px solid ${alpha(theme.palette.divider, 0.5)}` }}>
+          {[
+            { icon: '🔗', label: 'Blockchain Secured' },
+            { icon: '🛡️', label: 'AMP Verified' },
+            { icon: '📋', label: 'STCW Compliant' },
+            { icon: '🌐', label: 'Globally Verifiable' },
+          ].map((b, i) => (
+            <Chip
+              key={i}
+              label={`${b.icon} ${b.label}`}
+              size="small"
+              variant="outlined"
+              sx={{ fontSize: '0.7rem', fontWeight: 500, borderColor: alpha(theme.palette.primary.main, 0.2) }}
+            />
+          ))}
+        </Stack>
       </ProfileSection>
-      
-      {/* Tabs for different sections */}
+
+      {/* ================================================================ */}
+      {/* TABS */}
+      {/* ================================================================ */}
       <Tabs
         value={activeTab}
         onChange={handleTabChange}
         variant="fullWidth"
-        sx={{ 
-          mb: 3, 
-          '& .MuiTab-root': { 
+        sx={{
+          mb: 3,
+          '& .MuiTab-root': {
             fontWeight: 500,
             color: 'text.secondary',
             textTransform: 'none',
             minHeight: 48,
-            fontSize: '1rem',
+            fontSize: '0.9rem',
           },
-          '& .Mui-selected': {
-            color: 'primary.main',
-            fontWeight: 700,
-          },
-          '& .MuiTabs-indicator': {
-            height: 3,
-            borderRadius: 3,
-          }
+          '& .Mui-selected': { color: 'primary.main', fontWeight: 700 },
+          '& .MuiTabs-indicator': { height: 3, borderRadius: 3 },
         }}
       >
-        <Tab icon={<PersonIcon />} label="Identity" iconPosition="start" />
+        <Tab icon={<PersonIcon />} label="Applicant" iconPosition="start" />
         <Tab icon={<ImageIcon />} label="Documents" iconPosition="start" />
-        <Tab icon={<AssignmentIcon />} label="Transaction Details" iconPosition="start" />
+        <Tab icon={<AssignmentIcon />} label="Credential" iconPosition="start" />
         <Tab icon={<WalletIcon />} label="Wallet" iconPosition="start" />
       </Tabs>
-      
-      {/* Tab Content */}
+
+      {/* ================================================================ */}
+      {/* TAB 0: APPLICANT INFO */}
+      {/* ================================================================ */}
       <Box sx={{ display: activeTab === 0 ? 'block' : 'none' }}>
         <ProfileSection>
-          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 2, fontWeight: 500, fontSize: '1.1rem' }}>
-            Identity Information
+          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 2, fontWeight: 600, fontSize: '1.1rem' }}>
+            Applicant Information
           </Typography>
-          
+
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
             <Box sx={{ flex: 1 }}>
               <DataField>
-                <PersonIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt:0.5 }} />
+                <PersonIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
                 <Box>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                    Full Name
-                  </Typography>
-                  <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                    {state.didData.fullName || 'Not available'}
-                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Full Name</Typography>
+                  <Typography variant="body2" fontWeight={500}>{userInfo.fullName || didData.fullName || 'N/A'}</Typography>
                 </Box>
               </DataField>
-              
+
               <DataField>
-                <AccessTimeIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt:0.5 }} />
+                <BadgeIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
                 <Box>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                    Date of Birth
-                  </Typography>
-                  <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                    {state.didData.dateOfBirth || 'Not available'}
-                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>ID Number</Typography>
+                  <Typography variant="body2" fontWeight={500}>{userInfo.idNumber || didData.documentNumber || 'N/A'}</Typography>
+                </Box>
+              </DataField>
+
+              <DataField>
+                <PublicIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Nationality</Typography>
+                  <Typography variant="body2" fontWeight={500}>{userInfo.nationality || 'N/A'}</Typography>
+                </Box>
+              </DataField>
+
+              <DataField>
+                <CalendarIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Date of Birth</Typography>
+                  <Typography variant="body2" fontWeight={500}>{userInfo.dateOfBirth || didData.dateOfBirth || 'N/A'}</Typography>
                 </Box>
               </DataField>
             </Box>
-            
+
             <Box sx={{ flex: 1 }}>
               <DataField>
-                <AssignmentIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt:0.5 }} />
+                <WorkIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
                 <Box>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                    Document Number
-                  </Typography>
-                  <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                    {state.didData.documentNumber || 'Not available'}
-                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Capacity Request</Typography>
+                  <Typography variant="body2" fontWeight={500}>{userInfo.capacityRequest || 'N/A'}</Typography>
                 </Box>
               </DataField>
-              
+
               <DataField>
-                <VerifiedUserIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt:0.5 }} />
+                <EmailIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
                 <Box>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                    Document Type
-                  </Typography>
-                  <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                    {state.didData.documentType || 'Not available'}
-                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Email (administrative notifications)</Typography>
+                  <Typography variant="body2" fontWeight={500}>{userInfo.email || 'N/A'}</Typography>
+                </Box>
+              </DataField>
+
+              <DataField>
+                <PhoneIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Phone Number</Typography>
+                  <Typography variant="body2" fontWeight={500}>{userInfo.phoneNumber || 'N/A'}</Typography>
+                </Box>
+              </DataField>
+
+              <DataField>
+                <HomeIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Address</Typography>
+                  <Typography variant="body2" fontWeight={500}>{userInfo.address || 'N/A'}</Typography>
                 </Box>
               </DataField>
             </Box>
           </Stack>
-          
-          {/* Additional extracted details if available */}
-          {/* {state.didData.documentDetails && state.didData.documentDetails.metadata && (
-            <Box sx={{ mt: 2 }}>
-              <Divider sx={{ my: 2 }} />
-              <Typography variant="subtitle2" gutterBottom color="text.secondary" sx={{ fontSize: '0.8rem', mb: 1.5 }}>
-                Additional Details
-              </Typography>
-              
-              <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                {state.didData.documentDetails.metadata.issuingCountry && (
-                  <Box sx={{ flex: 1 }}>
-                    <DataField>
-                      <Box>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                          Issuing Country
-                        </Typography>
-                        <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                          {state.didData.documentDetails.metadata.issuingCountry}
-                        </Typography>
-                      </Box>
-                    </DataField>
-                  </Box>
-                )}
-                
-                {state.didData.documentDetails.metadata.documentType && (
-                  <Box sx={{ flex: 1 }}>
-                    <DataField>
-                      <Box>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                          Document Type
-                        </Typography>
-                        <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                          {state.didData.documentDetails.metadata.documentType}
-                        </Typography>
-                      </Box>
-                    </DataField>
-                  </Box>
-                )}
-                
-                {state.didData.documentDetails.gender && (
-                  <Box sx={{ flex: 1 }}>
-                    <DataField>
-                      <Box>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                          Gender
-                        </Typography>
-                        <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                          {state.didData.documentDetails.gender}
-                        </Typography>
-                      </Box>
-                    </DataField>
-                  </Box>
-                )}
-              </Stack>
-            </Box>
-          )} */}
-          
-          {/* Confidence score if available */}
-          {/* {state.didData.documentDetails && state.didVerificationScore && (
-            <Box sx={{ mt: 4 }}>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                Verification Confidence
-              </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={state.didVerificationScore}
-                sx={{
-                  height: 8,
-                  borderRadius: 4,
-                  mb: 1,
-                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                  '& .MuiLinearProgress-bar': {
-                    borderRadius: 4,
-                    backgroundColor: state.didData.documentDetails.confidence > 0.8 
-                      ? 'success.main' 
-                      : state.didData.documentDetails.confidence > 0.6 
-                      ? 'warning.main' 
-                      : 'error.main',
-                  }
-                }}
-              />
-              <Typography variant="caption" color="text.secondary" align="right" sx={{ display: 'block' }}>
-                {Math.round(state.didData.documentDetails.confidence * 100)}% confidence
-              </Typography>
-            </Box>
-          )} */}
         </ProfileSection>
       </Box>
-      
+
+      {/* ================================================================ */}
+      {/* TAB 1: DOCUMENTS */}
+      {/* ================================================================ */}
       <Box sx={{ display: activeTab === 1 ? 'block' : 'none' }}>
+        {/* Generated Port Pass */}
+        {generatedPassImage && (
+          <ProfileSection sx={{ mb: 3 }}>
+            <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 2, fontWeight: 600, fontSize: '1.1rem' }}>
+              Digital Port Pass Credential
+            </Typography>
+            <ImagePreview sx={{ height: 'auto' }}>
+              <img src={generatedPassImage} alt="Digital Port Pass" style={{ height: 'auto' }} />
+              <ImageOverlay className="overlay">
+                <IconButton sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.2)', '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }}>
+                  <VisibilityIcon />
+                </IconButton>
+              </ImageOverlay>
+            </ImagePreview>
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+              AI-generated credential image secured on blockchain
+            </Typography>
+          </ProfileSection>
+        )}
+
+        {/* Source Documents */}
         <ProfileSection>
-          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 3, fontWeight: 500 }}>
-            Document Images
+          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 3, fontWeight: 600 }}>
+            Source Documents
           </Typography>
-          
+
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={4}>
             {/* ID Document Image */}
             <Box sx={{ flex: 1 }}>
               <Typography variant="subtitle1" color="text.secondary" gutterBottom>
                 ID Document
               </Typography>
-              {state.didData.ipfsUrl ? (
-                <ImagePreview>
-                  <img src={state.didData.ipfsUrl} alt="ID Document" />
+              {didData.ipfsUrl ? (
+                <ImagePreview sx={{ height: 250 }}>
+                  <img src={didData.ipfsUrl} alt="ID Document" />
                   <ImageOverlay className="overlay">
-                    <IconButton
-                      sx={{ 
-                        color: 'white',
-                        bgcolor: 'rgba(255,255,255,0.2)',
-                        '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' }
-                      }}
-                    >
+                    <IconButton sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.2)', '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }}>
                       <VisibilityIcon />
                     </IconButton>
                   </ImageOverlay>
                 </ImagePreview>
               ) : (
-                <Box 
-                  sx={{ 
-                    width: '100%', 
-                    height: 250, 
-                    borderRadius: 4, 
-                    bgcolor: 'grey.100',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '2px dashed',
-                    borderColor: 'grey.300'
-                  }}
-                >
-                  <Typography variant="body2" color="text.secondary">
-                    No ID image available
-                  </Typography>
+                <Box sx={{ width: '100%', height: 250, borderRadius: 4, bgcolor: 'grey.100', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed', borderColor: 'grey.300' }}>
+                  <Typography variant="body2" color="text.secondary">No ID image available</Typography>
                 </Box>
               )}
-              
-              {state.didData.ipfsHash && (
+              {didData.ipfsHash && (
                 <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block', wordBreak: 'break-all' }}>
-                  IPFS Hash: {state.didData.ipfsHash}
+                  IPFS Hash: {didData.ipfsHash}
                 </Typography>
               )}
             </Box>
-            
+
             {/* Selfie/Liveness Image */}
             <Box sx={{ flex: 1 }}>
               <Typography variant="subtitle1" color="text.secondary" gutterBottom>
                 Liveness Verification
               </Typography>
-              {state.didData.livenessImage ? (
-                <ImagePreview>
-                  <img src={state.didData.livenessImage} alt="Liveness Verification" />
+              {didData.livenessImage ? (
+                <ImagePreview sx={{ height: 250 }}>
+                  <img src={didData.livenessImage} alt="Liveness Verification" />
                   <ImageOverlay className="overlay">
-                    <IconButton
-                      sx={{ 
-                        color: 'white',
-                        bgcolor: 'rgba(255,255,255,0.2)',
-                        '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' }
-                      }}
-                    >
+                    <IconButton sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.2)', '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }}>
                       <VisibilityIcon />
                     </IconButton>
                   </ImageOverlay>
                 </ImagePreview>
               ) : (
-                <Box 
-                  sx={{ 
-                    width: '100%', 
-                    height: 250, 
-                    borderRadius: 4, 
-                    bgcolor: 'grey.100',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '2px dashed',
-                    borderColor: 'grey.300'
-                  }}
-                >
-                  <Typography variant="body2" color="text.secondary">
-                    No selfie image available
-                  </Typography>
+                <Box sx={{ width: '100%', height: 250, borderRadius: 4, bgcolor: 'grey.100', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed', borderColor: 'grey.300' }}>
+                  <Typography variant="body2" color="text.secondary">No selfie image available</Typography>
                 </Box>
               )}
-              
-              {state.didData.livenessTimestamp && (
+              {didData.livenessTimestamp && (
                 <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                  Verified on {formatTimestamp(state.didData.livenessTimestamp)}
+                  Verified on {formatTimestamp(didData.livenessTimestamp)}
                 </Typography>
               )}
             </Box>
           </Stack>
         </ProfileSection>
       </Box>
-      
+
+      {/* ================================================================ */}
+      {/* TAB 2: CREDENTIAL DETAILS */}
+      {/* ================================================================ */}
       <Box sx={{ display: activeTab === 2 ? 'block' : 'none' }}>
+        <ProfileSection sx={{ mb: 3 }}>
+          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 2, fontWeight: 600, fontSize: '1.1rem' }}>
+            Credential Details
+          </Typography>
+
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+            <Box sx={{ flex: 1 }}>
+              <DataField>
+                <SecurityIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Credential ID</Typography>
+                  <Typography variant="body2" fontWeight={600} fontFamily="monospace">{credentialId}</Typography>
+                </Box>
+              </DataField>
+
+              <DataField>
+                <AssignmentIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Application Type</Typography>
+                  <Typography variant="body2" fontWeight={500}>{appType}</Typography>
+                </Box>
+              </DataField>
+
+              <DataField>
+                <VerifiedUserIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Status</Typography>
+                  <Chip label="Active — Minted & Verified" color="success" size="small" variant="outlined" sx={{ fontWeight: 600, fontSize: '0.7rem', mt: 0.25 }} />
+                </Box>
+              </DataField>
+            </Box>
+
+            <Box sx={{ flex: 1 }}>
+              <DataField>
+                <AccessTimeIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Minted On</Typography>
+                  <Typography variant="body2" fontWeight={500}>{mintTimestamp}</Typography>
+                </Box>
+              </DataField>
+
+              <DataField>
+                <AssignmentIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Form Version</Typography>
+                  <Typography variant="body2" fontWeight={500}>F-76 (TIT) V.03</Typography>
+                </Box>
+              </DataField>
+
+              <DataField>
+                <AssignmentIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem', mt: 0.5 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Document Type</Typography>
+                  <Typography variant="body2" fontWeight={500}>{didData.documentType || 'ID Document'}</Typography>
+                </Box>
+              </DataField>
+            </Box>
+          </Stack>
+        </ProfileSection>
+
+        {/* Transaction History */}
         <ProfileSection>
-          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 3, fontWeight: 500 }}>
+          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 3, fontWeight: 600 }}>
             Transaction History
           </Typography>
-          
-          {state.didData.transactionHash ? (
-            <Box>
-              <Card 
-                variant="outlined" 
-                sx={{ 
-                  mb: 2, 
-                  borderRadius: 2,
-                  borderColor: alpha(theme.palette.primary.main, 0.3),
-                  bgcolor: alpha(theme.palette.primary.main, 0.02),
-                }}
-              >
-                <CardContent>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Box>
-                      <Typography variant="subtitle2" color="primary">Minting Transaction</Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ wordBreak: 'break-all' }}>
-                        {state.didData.transactionHash}
-                      </Typography>
-                    </Box>
-                    <Chip 
-                      size="small" 
-                      label="Success" 
-                      color="success" 
-                      variant="outlined" 
-                    />
-                  </Stack>
-                  
-                  <Divider sx={{ my: 2 }} />
-                  
-                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="caption" color="text.secondary">
-                        Timestamp
-                      </Typography>
-                      <Typography variant="body2">
-                        {formatTimestamp(state.didData.mintingTimestamp)}
-                      </Typography>
-                    </Box>
-                    
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="caption" color="text.secondary">
-                        Token ID
-                      </Typography>
-                      <Typography variant="body2">
-                        {state.didData.didIdentifier || '49'}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                  
-                  <Box mt={2}>
-                    <Button 
-                      variant="outlined" 
-                      size="small"
-                      color="primary"
-                      onClick={() => window.open(`http://18.216.102.37:3001/tx/${state.didData.transactionHash}`, '_blank')}
-                    >
-                      View on RYT Explorer
-                    </Button>
+
+          {didData.transactionHash ? (
+            <Card
+              variant="outlined"
+              sx={{
+                mb: 2,
+                borderRadius: 2,
+                borderColor: alpha(theme.palette.primary.main, 0.3),
+                bgcolor: alpha(theme.palette.primary.main, 0.02),
+              }}
+            >
+              <CardContent>
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Box>
+                    <Typography variant="subtitle2" color="primary">Minting Transaction</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ wordBreak: 'break-all' }}>
+                      {didData.transactionHash}
+                    </Typography>
                   </Box>
-                </CardContent>
-              </Card>
-            </Box>
+                  <Chip size="small" label="Success" color="success" variant="outlined" />
+                </Stack>
+
+                <Divider sx={{ my: 2 }} />
+
+                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="caption" color="text.secondary">Timestamp</Typography>
+                    <Typography variant="body2">{formatTimestamp(didData.mintingTimestamp)}</Typography>
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="caption" color="text.secondary">Token ID</Typography>
+                    <Typography variant="body2">{didData.didIdentifier || '—'}</Typography>
+                  </Box>
+                </Stack>
+
+                <Box mt={2}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    color="primary"
+                    onClick={() => window.open(`http://18.216.102.37:3001/tx/${didData.transactionHash}`, '_blank')}
+                  >
+                    View on RYT Explorer
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
           ) : (
             <Typography variant="body1" sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
               No transaction history available
@@ -603,30 +665,31 @@ export default function DIDProfileView() {
           )}
         </ProfileSection>
       </Box>
-      
+
+      {/* ================================================================ */}
+      {/* TAB 3: WALLET */}
+      {/* ================================================================ */}
       <Box sx={{ display: activeTab === 3 ? 'block' : 'none' }}>
         <ProfileSection>
-          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 2, fontWeight: 500, fontSize: '1.1rem' }}>
+          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 2, fontWeight: 600, fontSize: '1.1rem' }}>
             Wallet Details
           </Typography>
-          
+
           <Stack spacing={2}>
             <DataField>
               <WalletIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem' }} />
               <Box sx={{ width: '100%' }}>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                  Connected Address
-                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Connected Address</Typography>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
                   <Typography variant="body2" fontWeight={500} sx={{ wordBreak: 'break-all', fontSize: '0.875rem' }}>
-                    {state.didData.walletAddress || 'Not connected'}
+                    {didData.walletAddress || 'Not connected'}
                   </Typography>
-                  {state.didData.walletAddress && (
+                  {didData.walletAddress && (
                     <Tooltip title="Copy Address">
-                      <IconButton 
-                        size="small" 
+                      <IconButton
+                        size="small"
                         onClick={() => {
-                          navigator.clipboard.writeText(state.didData.walletAddress);
+                          navigator.clipboard.writeText(didData.walletAddress);
                           setCopied(true);
                           setTimeout(() => setCopied(false), 2000);
                         }}
@@ -638,33 +701,27 @@ export default function DIDProfileView() {
                 </Stack>
               </Box>
             </DataField>
-            
+
             <DataField>
               <VerifiedUserIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem' }} />
               <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                  Network
-                </Typography>
-                <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                  RYT Dev Testnet
-                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Network</Typography>
+                <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>RYT Dev Testnet</Typography>
               </Box>
             </DataField>
-            
+
             <DataField>
               <LinkOffIcon sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.1rem' }} />
               <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', mb: 0.25 }}>
-                  Wallet Connection
-                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>Wallet Connection</Typography>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
-                    {state.didData.walletAddress ? 'Connected' : 'Not Connected'}
+                    {didData.walletAddress ? 'Connected' : 'Not Connected'}
                   </Typography>
-                  <Chip 
-                    size="small" 
-                    label={state.didData.walletAddress ? "Active" : "Inactive"} 
-                    color={state.didData.walletAddress ? "success" : "default"}
+                  <Chip
+                    size="small"
+                    label={didData.walletAddress ? 'Active' : 'Inactive'}
+                    color={didData.walletAddress ? 'success' : 'default'}
                     variant="outlined"
                     sx={{ fontSize: '0.7rem', height: '20px' }}
                   />
@@ -676,4 +733,4 @@ export default function DIDProfileView() {
       </Box>
     </Container>
   );
-} 
+}

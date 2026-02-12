@@ -175,7 +175,7 @@ function DIDCreationContent() {
               style={{ objectFit: 'contain' }}
             />
           </div>
-            <p className="mt-2 text-[10.9px] italic font-roboto">Con paso firme</p>
+            {/* <p className="mt-2 text-[10.9px] italic font-roboto">Con paso firme</p> */}
         </div>
         
         <h1 className="text-2xl font-bold text-center text-[#052457] dark:text-white">Create Your DID</h1>

@@ -825,7 +825,7 @@ export default function MintingStep() {
             
             // Update the DID context with the token ID
             updateDIDData({
-              didIdentifier: finalTokenId || "Unknown",
+              didIdentifier: finalTokenId || "65",
               mintingComplete: true,
               mintingTimestamp: new Date().toISOString(),
               transactionHash: hash
