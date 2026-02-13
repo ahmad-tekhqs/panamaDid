@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 
 // Contract configuration
-export const CONTRACT_ADDRESS = "0x08Ae1C4cCA4c312398daAD281ADFcF55FFF4Bc0d"; // Replace with your actual contract address
+export const CONTRACT_ADDRESS = "0x220B5D38BeD28Fa9128ec9724638Aee525f4f37a"; // Replace with your actual contract address
 export const TOKEN_URI = "ipfs://QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq"; // Placeholder URI
 
 // Contract ABI for the mint function

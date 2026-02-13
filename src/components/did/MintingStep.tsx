@@ -34,7 +34,7 @@ declare global {
 }
 
 // NFT Contract Constants
-const CONTRACT_ADDRESS = "0x08Ae1C4cCA4c312398daAD281ADFcF55FFF4Bc0d";
+const CONTRACT_ADDRESS = "0x220B5D38BeD28Fa9128ec9724638Aee525f4f37a";
 
 // Only the mint function ABI
 const CONTRACT_ABI = [
