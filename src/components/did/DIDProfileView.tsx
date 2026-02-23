@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useDIDContext } from '../../context/DIDContext';
+import DigitalPortPassCard, { DigitalPortPassData } from './DigitalPortPassCard';
 import { 
   Box, 
   Container,
@@ -21,7 +22,6 @@ import {
   styled,
   Tab,
   Tabs,
-  CircularProgress,
 } from '@mui/material';
 import { 
   VerifiedUser as VerifiedUserIcon,
@@ -46,7 +46,7 @@ import {
 } from '@mui/icons-material';
 
 // ============================================================================
-// HELPERS (moved from FinalizationStep)
+// HELPERS
 // ============================================================================
 
 interface UserInfo {
@@ -81,32 +81,6 @@ function getApplicationType(didData: Record<string, any>): string {
   };
   const appLabel = labels[appType] || 'Technical Documentation';
   return `${formType} — ${appLabel}`;
-}
-
-function buildImagePrompt(didData: Record<string, any>): string {
-  const userInfo = (didData.userInfo || {}) as UserInfo;
-  const fullName = userInfo.fullName || didData.fullName || 'Seafarer';
-  const nationality = userInfo.nationality || 'Panama';
-  const capacity = userInfo.capacityRequest || 'Maritime Professional';
-  const credentialId = buildCredentialId(didData);
-  const appType = getApplicationType(didData);
-
-  return `Create a highly detailed, professional Digital Port Pass credential card for the Panama Maritime Authority (Autoridad Marítima de Panamá). This is a physical-looking official government maritime credential, landscape orientation.
-
-Design specifications:
-- HEADER BAR: Dark navy blue (#052457) top strip with "AUTORIDAD MARÍTIMA DE PANAMÁ" in gold/white text, Panama coat of arms emblem on the left, and "PASE PORTUARIO DIGITAL" subtitle
-- LEFT SECTION: A silhouette placeholder portrait area with a thin gold border, styled like a passport photo slot. Below it: the credential holder name "${fullName}", nationality "${nationality}", capacity/rank "${capacity}"
-- CENTER: A large QR code graphic (stylistic, does not need to scan) with "VERIFIED ON BLOCKCHAIN" below it in small text
-- RIGHT SECTION: Credential details block with:
-  - Credential ID: ${credentialId}
-  - Application: ${appType}
-  - Status: MINTED & VERIFIED (with a green checkmark)
-  - Issue date: ${new Date().toLocaleDateString('es-PA')}
-  - Form Version: v.03
-- BOTTOM STRIP: Red (#D8131B) bar with "GOBIERNO NACIONAL — CON PASO FIRME" and maritime wave pattern
-- BACKGROUND: Subtle ocean wave watermark pattern in very light blue, micro-printed security text, holographic foil effect on corners
-- OVERALL STYLE: Blend of a modern government ID card and a digital blockchain credential. Colors: deep navy blue, panama red, white, and gold accents. Professional, authoritative, tamper-proof appearance. Include subtle ship/anchor/maritime motifs integrated into the background pattern.
-- The card should look photorealistic — like a real physical credential photographed on a dark surface with slight shadow and depth.`;
 }
 
 // ============================================================================
@@ -219,97 +193,60 @@ const CredentialBadge = styled(Chip)(() => ({
 // ============================================================================
 
 export default function DIDProfileView() {
-  const { state, updateDIDData } = useDIDContext();
+  const { state } = useDIDContext();
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState(0);
   const [copied, setCopied] = useState(false);
-
-  // Image generation state
-  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
-  const [imageProgress, setImageProgress] = useState(0);
-  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
-  const [imageError, setImageError] = useState<string | null>(null);
+  const [cardScale, setCardScale] = useState(1);
+  const cardWrapperRef = useRef<HTMLDivElement>(null);
 
   const didData = state.didData;
   const userInfo = (didData.userInfo || {}) as UserInfo;
   const credentialId = buildCredentialId(didData);
   const appType = getApplicationType(didData);
 
-  // --- Generate passport image on mount if not already generated ---
+  // Scale the 920px-wide card to fit within the container
   useEffect(() => {
-    let mounted = true;
-
-    // If we already have the image in state, just use it
-    if (didData.generatedPassImage) {
-      setGeneratedImageUrl(didData.generatedPassImage as string);
-      return;
-    }
-
-    const generateImage = async () => {
-      setIsGeneratingImage(true);
-      setImageProgress(0);
-
-      // Progress animation (slowly fill to 90% over 25s)
-      const genStart = Date.now();
-      const genInterval = setInterval(() => {
-        if (!mounted) { clearInterval(genInterval); return; }
-        const elapsed = Date.now() - genStart;
-        const p = Math.min((elapsed / 25000) * 90, 90);
-        setImageProgress(p);
-      }, 200);
-
-      try {
-        const prompt = buildImagePrompt(didData);
-        console.log('DIDProfileView: Generating Digital Port Pass image...');
-        console.log('Prompt (first 200 chars):', prompt.slice(0, 200));
-
-        const res = await fetch('/api/openai-image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt }),
-        });
-        const data = await res.json();
-
-        if (!res.ok || data.error) {
-          throw new Error(data.message || 'Image generation failed');
-        }
-
-        const imageUrl = data.imageUrl || null;
-
-        clearInterval(genInterval);
-        if (!mounted) return;
-
-        setImageProgress(100);
-
-        if (imageUrl) {
-          setGeneratedImageUrl(imageUrl);
-          // Persist in DID state so it survives re-renders
-          updateDIDData({
-            generatedPassImage: imageUrl,
-            completionTimestamp: didData.completionTimestamp || new Date().toISOString(),
-          });
-          console.log('DIDProfileView: Image generated and saved to state');
-        }
-      } catch (err: any) {
-        clearInterval(genInterval);
-        console.error('DIDProfileView: Image generation error:', err);
-        if (mounted) {
-          setImageError(err.message || 'Could not generate Digital Port Pass image.');
-        }
-      } finally {
-        if (mounted) {
-          setIsGeneratingImage(false);
+    const computeScale = () => {
+      if (cardWrapperRef.current) {
+        const containerWidth = cardWrapperRef.current.offsetWidth;
+        const cardWidth = 920;
+        if (containerWidth < cardWidth) {
+          setCardScale(containerWidth / cardWidth);
+        } else {
+          setCardScale(1);
         }
       }
     };
-
-    generateImage();
-    return () => { mounted = false; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    computeScale();
+    window.addEventListener('resize', computeScale);
+    return () => window.removeEventListener('resize', computeScale);
   }, []);
 
+  // Build card data from DID state
+  const didString = `did:ryt:${didData.didIdentifier || didData.walletAddress || '0x0'}`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(didString)}`;
+  const photoSrc = didData.livenessImage || didData.ipfsUrl || '';
+
+  const cardData: DigitalPortPassData = {
+    nameLine: 'NAME',
+    fullName: userInfo.fullName || didData.fullName || 'Seafarer',
+    country: userInfo.nationality || 'Panama',
+    dob: userInfo.dateOfBirth || didData.dateOfBirth || 'N/A',
+    passportLabel: 'Passport / ID',
+    passportId: userInfo.idNumber || didData.documentNumber || 'N/A',
+    seafarerCapacityLabel: 'SEAFARER CAPACITY:',
+    category: `Category — ${userInfo.capacityRequest || 'Maritime Professional'}`,
+    endorsement: appType,
+    issuedBy: 'Issued by Panama Maritime Authority',
+    dppNumber: credentialId,
+    verifyText: `Verify: ${didString.slice(0, 28)}...`,
+    photoSrc,
+    qrSrc: qrCodeUrl,
+    logoSrc: '/panama.svg',
+  };
+
   const handleCopyDID = () => {
-    const didString = `did:ryt:${didData.didIdentifier || didData.walletAddress || '0x0'}`;
     navigator.clipboard.writeText(didString);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -353,122 +290,20 @@ export default function DIDProfileView() {
       </Typography>
 
       {/* ================================================================ */}
-      {/* GENERATED PASSPORT IMAGE (Hero) — or Generation Progress */}
+      {/* DIGITAL PORT PASS CARD (Hero) */}
       {/* ================================================================ */}
-      {isGeneratingImage && (
-        <ProfileSection sx={{ mb: 4, textAlign: 'center', py: 5 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-              <CircularProgress
-                variant="determinate"
-                value={imageProgress}
-                size={80}
-                thickness={3}
-                sx={{
-                  color: imageProgress < 50 ? theme.palette.primary.main : '#D8131B',
-                }}
-              />
-              <Box
-                sx={{
-                  top: 0, left: 0, bottom: 0, right: 0,
-                  position: 'absolute',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Typography variant="caption" fontWeight={700} color="text.secondary">
-                  {Math.round(imageProgress)}%
-                </Typography>
-              </Box>
-            </Box>
-            <Typography variant="h6" fontWeight={600} color="primary.main">
-              Generating Digital Port Pass
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400 }}>
-              Creating your personalized credential image with AI. This may take 10-20 seconds...
-            </Typography>
-
-            {/* Progress checklist */}
-            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, mt: 1, textAlign: 'left' }}>
-              {[
-                { label: 'Composing credential layout', done: imageProgress > 15 },
-                { label: 'Applying Panama theme', done: imageProgress > 35 },
-                { label: 'Embedding identity data', done: imageProgress > 55 },
-                { label: 'Rendering final image', done: imageProgress > 80 },
-              ].map((c, i) => (
-                <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>
-                    {c.done ? '✅' : '⏳'}
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontSize: '0.8rem', color: c.done ? 'text.primary' : 'text.disabled' }}>
-                    {c.label}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </Box>
-        </ProfileSection>
-      )}
-
-      {generatedImageUrl && !isGeneratingImage && (
-        <ProfileSection sx={{ mb: 4, p: 0, overflow: 'hidden' }}>
-          <ImagePreview sx={{ border: 'none', boxShadow: 'none', borderRadius: 0 }}>
-            <img src={generatedImageUrl} alt="Digital Port Pass Credential" style={{ height: 'auto' }} />
-          </ImagePreview>
-        </ProfileSection>
-      )}
-
-      {imageError && !generatedImageUrl && !isGeneratingImage && (
-        <ProfileSection sx={{ mb: 4, textAlign: 'center', py: 3 }}>
-          <Typography variant="body2" color="warning.main" sx={{ fontSize: '0.85rem' }}>
-            ⚠️ Image generation unavailable: {imageError}
-          </Typography>
-          <Button
-            variant="outlined"
-            size="small"
-            sx={{ mt: 1.5 }}
-            onClick={() => {
-              setImageError(null);
-              setIsGeneratingImage(true);
-              setImageProgress(0);
-
-              const genStart = Date.now();
-              const genInterval = setInterval(() => {
-                const elapsed = Date.now() - genStart;
-                const p = Math.min((elapsed / 25000) * 90, 90);
-                setImageProgress(p);
-              }, 200);
-
-              (async () => {
-                try {
-                  const prompt = buildImagePrompt(didData);
-                  const res = await fetch('/api/openai-image', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt }),
-                  });
-                  const data = await res.json();
-                  if (!res.ok || data.error) throw new Error(data.message || 'Image generation failed');
-                  clearInterval(genInterval);
-                  setImageProgress(100);
-                  if (data.imageUrl) {
-                    setGeneratedImageUrl(data.imageUrl);
-                    updateDIDData({ generatedPassImage: data.imageUrl });
-                  }
-                } catch (err: any) {
-                  clearInterval(genInterval);
-                  setImageError(err.message || 'Could not generate image.');
-                } finally {
-                  setIsGeneratingImage(false);
-                }
-              })();
-            }}
-          >
-            Retry Image Generation
-          </Button>
-        </ProfileSection>
-      )}
+      <Box ref={cardWrapperRef} sx={{ mb: 4, width: '100%', overflow: 'hidden' }}>
+        <Box
+          sx={{
+            width: 920,
+            transformOrigin: 'top left',
+            transform: `scale(${cardScale})`,
+            height: `${620 * cardScale}px`,
+          }}
+        >
+          <DigitalPortPassCard data={cardData} />
+        </Box>
+      </Box>
 
       {/* ================================================================ */}
       {/* HEADER CARD: Identity + Status */}
@@ -511,7 +346,7 @@ export default function DIDProfileView() {
               }}
             >
               <Typography component="span" sx={{ fontWeight: 500 }}>
-                did:ryt:{didData.didIdentifier || didData.walletAddress || '0x0'}
+                {didString}
               </Typography>
               <Tooltip title={copied ? 'Copied!' : 'Copy to clipboard'}>
                 <IconButton onClick={handleCopyDID} size="small">
@@ -672,25 +507,24 @@ export default function DIDProfileView() {
       {/* TAB 1: DOCUMENTS */}
       {/* ================================================================ */}
       <Box sx={{ display: activeTab === 1 ? 'block' : 'none' }}>
-        {/* Generated Port Pass */}
-        {generatedImageUrl && (
-          <ProfileSection sx={{ mb: 3 }}>
-            <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 2, fontWeight: 600, fontSize: '1.1rem' }}>
-              Digital Port Pass Credential
-            </Typography>
-            <ImagePreview sx={{ height: 'auto' }}>
-              <img src={generatedImageUrl} alt="Digital Port Pass" style={{ height: 'auto' }} />
-              <ImageOverlay className="overlay">
-                <IconButton sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.2)', '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }}>
-                  <VisibilityIcon />
-                </IconButton>
-              </ImageOverlay>
-            </ImagePreview>
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-              AI-generated credential image secured on blockchain
-            </Typography>
-          </ProfileSection>
-        )}
+        {/* Digital Port Pass Card in Documents tab too */}
+        <ProfileSection sx={{ mb: 3 }}>
+          <Typography variant="h6" gutterBottom color="primary.main" sx={{ mb: 2, fontWeight: 600, fontSize: '1.1rem' }}>
+            Digital Port Pass Credential
+          </Typography>
+          <Box sx={{ width: '100%', overflow: 'hidden' }}>
+            <Box
+              sx={{
+                width: 920,
+                transformOrigin: 'top left',
+                transform: `scale(${cardScale})`,
+                height: `${620 * cardScale}px`,
+              }}
+            >
+              <DigitalPortPassCard data={cardData} />
+            </Box>
+          </Box>
+        </ProfileSection>
 
         {/* Source Documents */}
         <ProfileSection>
