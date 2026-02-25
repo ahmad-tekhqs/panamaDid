@@ -901,7 +901,7 @@ export default function MintingStep() {
               
               <Box sx={{ mt: 4, mb: 2, mx: 'auto', maxWidth: 500 }}>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                  Preparing your digital identity...
+                  Preparing your Digital Port Pass...
                 </Typography>
                 <LinearProgress 
                   variant="determinate" 
@@ -950,7 +950,7 @@ export default function MintingStep() {
                   fontWeight: 600
                 }}
               >
-                Minting Your Decentralized Identity
+                Minting Your Digital Port Pass
               </Typography>
               
               <Box sx={{ position: 'relative', mb: 4, mt: 2 }}>
@@ -1069,11 +1069,11 @@ export default function MintingStep() {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                DID Successfully Minted!
+                DPP Successfully Minted!
               </Typography>
               
               <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-                Your decentralized identifier has been successfully minted on the blockchain
+                Your Digital Port Pass has been successfully minted on the blockchain
               </Typography>
               
               {txHash && (
@@ -1103,7 +1103,7 @@ export default function MintingStep() {
               {tokenId && (
                 <DidDisplay>
                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-                    Your Decentralized Identity (DID)
+                    Your Digital Port Pass (DPP)
                   </Typography>
                   <Typography 
                     variant="h6" 

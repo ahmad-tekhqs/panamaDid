@@ -122,7 +122,7 @@ function DIDCreationContent() {
               </Box>
             </Box>
             <Typography variant="h6" fontWeight="medium" color="text.primary" gutterBottom align="center" sx={{ mb: 1 }}>
-              DID Successfully Created!
+              Digital Port Pass Created Successfully!
             </Typography>
             
             {/* Display the comprehensive DID Profile */}
@@ -178,8 +178,8 @@ function DIDCreationContent() {
             {/* <p className="mt-2 text-[10.9px] italic font-roboto">Con paso firme</p> */}
         </div>
         
-        <h1 className="text-2xl font-bold text-center text-[#052457] dark:text-white">Create Your DID</h1>
-        <p className="text-600 dark:text-gray-400 text-[#444444] text-center mb-4">Secure your digital identity on the blockchain</p>
+        <h1 className="text-2xl font-bold text-center text-[#052457] dark:text-white">Create Your Digital Port Pass</h1>
+        <p className="text-600 dark:text-gray-400 text-[#444444] text-center mb-4">Secure your maritime credential on the blockchain</p>
         
         {/* Replace progress bar with Material-UI Stepper */}
         <div className="mb-6">

@@ -11,8 +11,8 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "DID de Panamá",
-  description: "Create and manage Decentralized Identifiers",
+  title: "Digital Port Pass — Panamá",
+  description: "Create and manage your Digital Port Pass (DPP) for maritime credentials",
 };
 
 export default function RootLayout({

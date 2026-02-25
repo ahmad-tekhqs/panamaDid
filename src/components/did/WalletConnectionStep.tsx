@@ -61,7 +61,7 @@ export default function WalletConnectionStep() {
       {!account ? (
         <>
           <p className="text-gray-600 dark:text-gray-300">
-            Please connect your wallet to begin the DID creation process
+            Please connect your wallet to begin the Digital Port Pass creation process
           </p>
           <button 
             onClick={connectWallet} 

@@ -203,7 +203,7 @@ export default function FinalizationStep() {
 
       {stage === 'processing' && (
         <ProgressCard
-          title="Finalizing Your DID"
+          title="Finalizing Your Digital Port Pass"
           subtitle="Securing your credential on the blockchain..."
           progress={animationProgress}
           checks={[
@@ -375,7 +375,7 @@ function CompletedView({
           <InfoRow label="Minted on" value={mintTimestamp} />
           <InfoRow label="Application Type" value={appType} />
           <InfoRow label="Form Version" value="F-76 (TIT) V.03" />
-          <InfoRow label="DID Identifier" value={`did:ryt:${didData.didIdentifier || didData.walletAddress || '0x0'}`} mono />
+          <InfoRow label="DPP Identifier" value={`did:ryt:${didData.didIdentifier || didData.walletAddress || '0x0'}`} mono />
           <InfoRow label="Status" value="Active" badge />
         </div>
       </div>

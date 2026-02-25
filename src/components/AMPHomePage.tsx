@@ -167,7 +167,7 @@ function Header() {
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
               </svg>
-              Identidad Digital
+              Pase Portuario Digital
             </button>
 
             {/* Hamburger Menu */}
@@ -252,7 +252,7 @@ function Header() {
                     onClick={() => { setIsMenuOpen(false); router.push('/gente-de-mar'); }}
                     className="block mt-4 bg-[#D8131B] text-white px-4 py-2 rounded text-sm font-bold hover:bg-red-700 transition-colors"
                   >
-                    Identidad Digital (DID)
+                    Pase Portuario Digital (DPP)
                   </button>
                 </div>
               </div>
@@ -392,7 +392,7 @@ function HeroSlider() {
         </div>
         <div className="text-left">
           <p className="text-[9px] sm:text-[10px] opacity-80">Registro</p>
-          <p className="font-bold text-xs sm:text-sm">Identidad Digital</p>
+          <p className="font-bold text-xs sm:text-sm">Pase Portuario Digital</p>
         </div>
       </button>
 
@@ -886,8 +886,8 @@ function BlockchainDIDSection() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
         </svg>
       ),
-      title: 'Identidad Digital',
-      desc: 'Identidad marítima segura y portátil que usted controla.',
+      title: 'Pase Portuario Digital',
+      desc: 'Credencial marítima segura y portátil que usted controla.',
     },
   ];
 
@@ -910,7 +910,7 @@ function BlockchainDIDSection() {
             </span>
           </div>
           <h2 className="font-bold text-2xl sm:text-3xl lg:text-4xl text-white mb-4 uppercase">
-            Identidad Digital Segura
+            Pase Portuario Digital Seguro
           </h2>
           <p className="text-white/70 max-w-2xl mx-auto text-sm sm:text-base">
             La Autoridad Marítima de Panamá utiliza tecnología blockchain para proporcionar credenciales a prueba de manipulación para la gente de mar en todo el mundo.
@@ -946,7 +946,7 @@ function BlockchainDIDSection() {
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
             </svg>
-            Registre su Identidad Digital
+            Registre su Pase Portuario Digital
           </button>
         </div>
 

@@ -355,7 +355,7 @@ export default function ConnectWalletPage() {
                 fontSize: { xs: '1.25rem', md: '1.5rem' }
               }}
             >
-            Emita su DID en minutos para acceder de forma segura a servicios del Gobierno y aliados.
+            Emita su Pase Portuario Digital en minutos para acceder de forma segura a servicios del Gobierno y aliados.
             </Typography>
           </Box>
           
@@ -464,7 +464,7 @@ export default function ConnectWalletPage() {
                       fontWeight: 500,
                     }}
                   >
-                    Connect to start your DID journey
+                    Connect to start your DPP journey
                   </Typography>
                   
                   <WalletButton 
@@ -547,7 +547,7 @@ export default function ConnectWalletPage() {
                   />
                   
                   <Typography sx={{ color: alpha('#2c3e50', 0.7) }}>
-                    Redirecting to DID creation...
+                    Redirecting to DPP creation...
                   </Typography>
                   
                   <ProgressContainer />

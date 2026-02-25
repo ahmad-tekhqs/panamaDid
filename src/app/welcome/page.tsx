@@ -211,7 +211,7 @@ export default function WelcomePage() {
                
               }}
             >
-             Identidad Digital (DID) de Panamá
+             Pase Portuario Digital (DPP) de Panamá
             </Typography>
             
             <Typography 

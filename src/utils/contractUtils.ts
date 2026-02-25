@@ -560,8 +560,8 @@ export const createDidMetadata = (
   // In a real application, you would create proper metadata
   // following a standard format like ERC-721 metadata schema
   return JSON.stringify({
-    name: `Digital Identity for ${idInfo.fullName}`,
-    description: "Digital Identity Document NFT",
+    name: `Digital Port Pass for ${idInfo.fullName}`,
+    description: "Digital Port Pass (DPP) — Maritime Credential NFT",
     image: selfieImageUrl,
     attributes: [
       {

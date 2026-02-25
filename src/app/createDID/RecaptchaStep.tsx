@@ -119,7 +119,7 @@ const RecaptchaStep: React.FC<RecaptchaStepProps> = ({ onComplete, isLoading = f
           maxWidth: '450px'
         }}
       >
-        Please complete the security check below to proceed with your DID creation
+        Please complete the security check below to proceed with your Digital Port Pass creation
       </Typography>
       
       <Paper elevation={4} sx={{ 

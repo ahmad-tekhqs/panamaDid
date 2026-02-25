@@ -18,6 +18,6 @@ export const steps = [
   { step: CreationStep.LIVENESS_VERIFICATION, label: 'Proof of Liveness', progress: 30 },
   { step: CreationStep.EXTRACTION, label: 'Verify Info', progress: 45 },
   { step: CreationStep.VERIFICATION, label: 'Validate Info', progress: 65 },
-  { step: CreationStep.MINTING, label: 'Mint DID', progress: 85 },
+  { step: CreationStep.MINTING, label: 'Mint DPP', progress: 85 },
   { step: CreationStep.COMPLETED, label: 'Complete', progress: 100 }
 ]; 
